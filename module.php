@@ -52,7 +52,7 @@ class GendexGeneratorModule extends AbstractModule implements ModuleCustomInterf
     // Moduleversie
     public function customModuleVersion(): string
     {
-        return '2.2.5';
+        return '2.2.5-alpha';
     }
 
     // Vertalingen laden (voor NL/EN)
