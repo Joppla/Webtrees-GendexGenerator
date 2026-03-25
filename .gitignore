@@ -1,0 +1,9 @@
+# Ignoreer backup-bestanden (eindigend op ~)
+*~
+
+# Ignoreer logbestanden
+*.log
+
+# Ignoreer IDE-specifieke bestanden (bijv. van PHPStorm of VSCode)
+.idea/
+.vscode/
