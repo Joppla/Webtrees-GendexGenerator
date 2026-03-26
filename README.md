@@ -1,4 +1,4 @@
-![Module Version](https://img.shields.io/badge/version-2.2.5-blue) ![Webtrees Version](https://img.shields.io/badge/Webtrees-2.2.x-green) ![License: GPL v3](https://img.shields.io/badge/License-GPLv3-blue.svg)
+![Module Version](https://img.shields.io/badge/version-1.0.0-blue) ![Webtrees Version](https://img.shields.io/badge/Webtrees-2.2.x-green) ![License: GPL v3](https://img.shields.io/badge/License-GPLv3-blue.svg)
 
 # Webtrees Gendex Generator
 A Webtrees module to generate `gendex.txt` files for family trees.
