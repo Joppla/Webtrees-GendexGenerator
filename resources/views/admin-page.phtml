@@ -1,3 +1,14 @@
+<?php
+use Aura\Router\RouterContainer;
+use Fisharebest\Webtrees\I18N;
+use Fisharebest\Webtrees\Http\RequestHandlers\ControlPanel;
+
+
+?>
+<?php $this->layout = 'layouts/administration'; ?>
+<?= view('components/breadcrumbs', ['links' => [route(ControlPanel::class) => I18N::translate('Control panel'), $title]]) ?>
+
+
 <div>
     <h1><?= e($title) ?></h1>
     <p>Welkom bij de configuratiepagina van de Gendex Generator-module.</p>
