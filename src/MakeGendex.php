@@ -46,6 +46,14 @@ class MakeGendex
         return $individual->canShowName(Auth::PRIV_PRIVATE);
     }
 
+    private function sanitizeFieldForOutput(string $value): string
+    {
+        return str_replace(["\r", "\n", "|"], ' ', $value);
+    }
+
+
+
+
     /**
      * Zoekt in de ##dates tabel de eerste datum die matcht met de gegeven feiten (in volgorde).
      * facts: array of fact types, e.g. ['BIRT','BAPM','CHR']
@@ -54,7 +62,6 @@ class MakeGendex
     private function getDateFromFacts(array $facts, string $xref, Tree $tree): string
     {
         foreach ($facts as $fact) {
-            // Gebruik DB::table met prefix; de dates-tabel in webtrees is 'dates' met prefix handling
             $row = DB::table('dates')
                 ->select(['d_year', 'd_month', 'd_day'])
                 ->where('d_fact', '=', $fact)
@@ -62,19 +69,30 @@ class MakeGendex
                 ->where('d_file', '=', $tree->id())
                 ->limit(1)
                 ->get();
-
+    
             if (!empty($row) && isset($row[0])) {
-                $r = $row[0];
-                $day = (!empty($r->d_day) && (int)$r->d_day > 0) ? ((int)$r->d_day . ' ') : '';
-                $month = !empty($r->d_month) ? ($r->d_month . ' ') : '';
-                $year = (!empty($r->d_year) && (int)$r->d_year > 0) ? (string)((int)$r->d_year) : '';
-                $date = trim($day . $month . $year);
-                return $date;
+                return $this->formatDate($row[0]);  // <- Hier roep je de helper aan
             }
         }
-
+    
         return '';
     }
+    
+    private function formatDate(object $row): string
+    {
+        $parts = [];
+        if (!empty($row->d_day) && (int)$row->d_day > 0) {
+            $parts[] = (int)$row->d_day;
+        }
+        if (!empty($row->d_month)) {
+            $parts[] = $row->d_month;
+        }
+        if (!empty($row->d_year) && (int)$row->d_year > 0) {
+            $parts[] = (int)$row->d_year;
+        }
+        return implode(' ', $parts);
+    }
+
 
     /**
      * Converteer een plaats-waarde (string of Place-object of null) naar string.
@@ -84,26 +102,14 @@ class MakeGendex
         if ($place === null) {
             return '';
         }
-    
-        // Als het een object is met __toString of shortName/display methodes
-        if (is_object($place)) {
-            // Fisharebest\Webtrees\Place heeft waarschijnlijk shortName() of __toString()
-            if (method_exists($place, 'shortName')) {
-                return (string) $place->shortName();
-            }
-            if (method_exists($place, 'display')) {
-                return (string) $place->display();
-            }
-            if (method_exists($place, '__toString')) {
-                return (string) $place;
-            }
-            // Fallback: probeer json_encode of get_class
-            return (string) get_class($place);
+        
+        if (is_object($place) && method_exists($place, 'shortName')) {
+            return (string) $place->shortName();
         }
-    
-        // Anders assume stringable
+        
         return (string) $place;
     }
+
 
     private function formatLineFromNameRow(Tree $tree, object $nameRow, Individual $individual): string
     {
@@ -140,7 +146,8 @@ class MakeGendex
             $deathPlace,
         ];
 
-        $columns = array_map(fn($c) => str_replace(["\r", "\n", '|'], ' ', (string)$c), $columns);
+        $columns = array_map(fn($c) => $this->sanitizeFieldForOutput((string)$c), $columns);
+
 
         return implode('|', $columns) . '|';
     }
@@ -190,12 +197,16 @@ class MakeGendex
         if ($handleMain === false) {
             throw new Exception("Kan tmp bestand niet openen: {$tmpPath}");
         }
+        // BOM (Byte Order Mark) toevoegen voor UTF-8
+        fwrite($handleMain, "\xEF\xBB\xBF");
+        
         $handleFiltered = fopen($tmpFilteredPath, 'w');
         if ($handleFiltered === false) {
             fclose($handleMain);
             throw new Exception("Kan tmp filtered bestand niet openen: {$tmpFilteredPath}");
         }
-
+        fwrite($handleFiltered, "\xEF\xBB\xBF");
+        
         fwrite($handleMain, $this->generateGendexHeader() . PHP_EOL);
         fwrite($handleFiltered, "tree|n_id|n_givn|n_surname|reason" . PHP_EOL);
 
@@ -213,8 +224,10 @@ class MakeGendex
                     // Probeer Individual-object te maken; voorkomt M/N/andere records
                     $individual = Registry::individualFactory()->make($nId, $tree);
                     if (! $individual) {
-                        $givn = isset($nameRow->n_givn) ? str_replace(["\r","\n","|"], ' ', (string)$nameRow->n_givn) : '';
-                        $surn = isset($nameRow->n_surname) ? str_replace(["\r","\n","|"], ' ', (string)$nameRow->n_surname) : '';
+// $givn = isset($nameRow->n_givn) ? $this->sanitizeFieldForOutput((string)$nameRow->n_givn) : '';
+
+                        $givn = isset($nameRow->n_givn) ? $this->sanitizeFieldForOutput((string)$nameRow->n_givn) : '';
+                        $surn = isset($nameRow->n_surname) ? $this->sanitizeFieldForOutput((string)$nameRow->n_surname) : '';
                         $reason = 'no_individual';
                         $filteredLine = implode('|', [$tree->name(), $nId, $givn, $surn, $reason]);
                         fwrite($handleFiltered, $filteredLine . PHP_EOL);
@@ -222,8 +235,8 @@ class MakeGendex
                     }
 
                     if (! $this->canShowNameForIndividual($individual)) {
-                        $givn = isset($nameRow->n_givn) ? str_replace(["\r","\n","|"], ' ', (string)$nameRow->n_givn) : '';
-                        $surn = isset($nameRow->n_surname) ? str_replace(["\r","\n","|"], ' ', (string)$nameRow->n_surname) : '';
+                        $givn = isset($nameRow->n_givn) ? $this->sanitizeFieldForOutput((string)$nameRow->n_givn) : '';
+                        $surn = isset($nameRow->n_surname) ? $this->sanitizeFieldForOutput((string)$nameRow->n_surname) : '';
                         $reason = 'privacy_filtered';
                         $filteredLine = implode('|', [$tree->name(), $nId, $givn, $surn, $reason]);
                         fwrite($handleFiltered, $filteredLine . PHP_EOL);

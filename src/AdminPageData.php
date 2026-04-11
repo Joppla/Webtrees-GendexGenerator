@@ -27,18 +27,18 @@ class AdminPageData
 {
     private TreeService $treeService;
     private string $rootDir;
-    private ?I18N $i18n;
+    // private ?I18N $i18n;
 
     /**
      * @param TreeService $treeService  Service om stambomen op te halen
      * @param string $rootDir           Webtrees root directory (Webtrees::ROOT_DIR)
      * @param I18N|null $i18n           Optionele I18N instance
      */
-    public function __construct(TreeService $treeService, string $rootDir, ?I18N $i18n = null)
+    public function __construct(TreeService $treeService, string $rootDir)
     {
         $this->treeService = $treeService;
         $this->rootDir = rtrim($rootDir, DIRECTORY_SEPARATOR) . DIRECTORY_SEPARATOR;
-        $this->i18n = $i18n;
+        /*$this->i18n = $i18n;*/
     }
 
     /**
@@ -75,21 +75,16 @@ class AdminPageData
     /**
      * Bepaalt de knoptekst op basis van of gendex.txt bestaat
      */
-    private function buildButtonText(): string
-    {
-        $path = $this->rootDir . 'gendex.txt';
-        $exists = file_exists($path);
-
-        if ($this->i18n instanceof I18N) {
-            return $exists
-                ? $this->i18n->translate('Replace GENDEX text file')
-                : $this->i18n->translate('Create GENDEX text file');
-        }
-
-        return $exists
-            ? I18N::translate('Replace GENDEX text file')
-            : I18N::translate('Create GENDEX text file');
-    }
+    // In module.php: niet meer nodig
+// In AdminPageData: altijd I18N::translate() gebruiken
+private function buildButtonText(): string
+{
+    $path = $this->rootDir . 'gendex.txt';
+    $exists = file_exists($path);
+    return $exists
+        ? I18N::translate('Replace GENDEX text file')
+        : I18N::translate('Create GENDEX text file');
+}
 
     /**
      * Haalt geselecteerde stambomen uit de query-parameters (fallback leeg array)
@@ -102,26 +97,13 @@ class AdminPageData
     
     private function buildBaseUrlFromRequest(ServerRequestInterface $request): string
     {
-        $uri    = $request->getUri();
+        $uri = $request->getUri();
         $scheme = $uri->getScheme();
-        $host   = $uri->getHost();
-        $port   = $uri->getPort();
+        $host = $uri->getHost();
+        $port = $uri->getPort();
+        
         $authority = $host . ($port && !in_array($port, [80, 443]) ? ':' . $port : '');
-    
-        $server = $request->getServerParams();
-        $script = $server['SCRIPT_NAME'] ?? $server['PHP_SELF'] ?? $uri->getPath();
-    
-        // verwijder '/index.php' indien aanwezig
-        $basePath = preg_replace('#/index\.php$#', '', $script);
-        // als basePath gelijk is aan het volledige path van de URI, maar bevat query/extra segments, trim dan tot directory
-        $basePath = rtrim($basePath, '/');
-    
-        // als basePath lijkt op een volledige path met extra segments die niet de base zijn, fallback naar empty
-        if ($basePath === $uri->getPath() && $basePath !== '' && !str_contains($server['SCRIPT_NAME'] ?? '', 'index.php')) {
-            $basePath = '';
-        }
-    
-        return $scheme . '://' . $authority . ($basePath !== '' ? $basePath : '');
+        return $scheme . '://' . $authority;
     }
 
 }

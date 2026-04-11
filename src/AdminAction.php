@@ -16,23 +16,11 @@ class AdminAction implements RequestHandlerInterface
         $this->module = $module;
     }
 
-    public function __invoke(ServerRequestInterface $request): ResponseInterface
-    {
-        return $this->dispatch($request);
-    }
-
     public function handle(ServerRequestInterface $request): ResponseInterface
     {
-        return $this->dispatch($request);
-    }
-
-    private function dispatch(ServerRequestInterface $request): ResponseInterface
-    {
-        $method = strtoupper($request->getMethod());
-        if ($method === 'POST') {
+        if (strtoupper($request->getMethod()) === 'POST') {
             return $this->module->postAdminAction($request);
         }
-
         return $this->module->getAdminAction($request);
     }
 }

@@ -41,6 +41,7 @@ class GendexGeneratorModule extends AbstractModule implements ModuleCustomInterf
     use ModuleConfigTrait;
 
     private TreeService $treeService;
+    private AdminPageData $adminPageData;
 
     /**
      * Constructor
@@ -58,19 +59,19 @@ class GendexGeneratorModule extends AbstractModule implements ModuleCustomInterf
 
         // Haal services uit de dependency container
         $this->treeService = Registry::container()->get(TreeService::class);
-     
+
         // Probeer I18N uit container; fallback naar null als niet aanwezig
-        $i18n = Registry::container()->has(I18N::class)
+/*        $i18n = Registry::container()->has(I18N::class)
             ? Registry::container()->get(I18N::class)
-            : null;
-    
+            : null;*/
+
         // AdminPageData houdt logic voor het opbouwen van de admin view data
         $this->adminPageData = new AdminPageData(
             $this->treeService,
             Webtrees::ROOT_DIR,
-            $i18n
+            /*$i18n*/
         );
-    }    
+    }
 
     /**
      * Titel van de module (getoond in de module-lijst)
@@ -135,14 +136,14 @@ class GendexGeneratorModule extends AbstractModule implements ModuleCustomInterf
     {
         // Bouw DTO met alle benodigde data voor de view
         $dto = $this->adminPageData->fromRequest($request);
-    
+
         // Gebruik de administratie-layout van webtrees
         $this->layout = 'layouts/administration';
-        
+
         $selectedAddAllNames = 0; // 0 = yes, 1 = no
         $selectedDiacritical  = 0; // 0 = yes, 1 = no
 
-    
+
         // Render de admin-page view met data uit de DTO
         return $this->viewResponse($this->name() . '::admin-page', [
             'title' => $this->title(),
@@ -172,65 +173,36 @@ class GendexGeneratorModule extends AbstractModule implements ModuleCustomInterf
     }
 
     /**
-     * (Optionele) helper: directe aanroep van de generator.
-     * Deze wrapper wordt momenteel niet direct gebruikt omdat de form-handler de generator aanroept,
-     * maar kan handig zijn voor tests of andere entrypoints.
-     */
-    public function generateGendex(array $selectedTrees): void
-    {
-        $gendexGenerator = new MakeGendex();
-        $gendexGenerator->generateGendexFile($selectedTrees);
-    }
-    
-    /**
      * Bootstrap-fase van de module.
      * Hier registreren we de view namespace zodat views in resources/views/ gevonden worden.
      */
     public function boot(): void
-    {
-        View::registerNamespace($this->name(), $this->resourcesFolder() . 'views/');
-    
-        $container = Registry::container();
-        if (! $container->has(\Aura\Router\RouterContainer::class)) {
-            return;
-        }
-    
-        /** @var \Aura\Router\RouterContainer $router */
-        $router = $container->get(\Aura\Router\RouterContainer::class);
-        $map = $router->getMap();
-        $module = $this;
-    
-        $map->attach('', '/admin', static function (\Aura\Router\Map $r) use ($module) {
-            // Unieke route IDs to avoid collisions with other modules
-            $idPage    = AdminPage::class . '::get';
-            $idAction  = AdminAction::class . '::post';
-    
-            // Admin page (GET)
-            try {
-                $r->getRoute($idPage);
-            } catch (\Aura\Router\Exception\RouteNotFound $e) {
-                $r->get($idPage, '/gendex-generator', new AdminPage($module));
-            }
-    
-            // Admin action (POST)
-            try {
-                $r->getRoute($idAction);
-            } catch (\Aura\Router\Exception\RouteNotFound $e) {
-                $r->post($idAction, '/gendex-generator/save', new AdminAction($module));
-            }
-        });
+{
+    View::registerNamespace($this->name(), $this->resourcesFolder() . 'views/');
+
+    $container = Registry::container();
+    if (!$container->has(\Aura\Router\RouterContainer::class)) {
+        return;
     }
 
+    $router = $container->get(\Aura\Router\RouterContainer::class);
+    $map = $router->getMap();
 
-    
+    $map->attach('', '/admin', function (\Aura\Router\Map $r) {
+        $r->get(AdminPage::class . '::get', '/gendex-generator', 
+            fn($request) => $this->getAdminAction($request));
+        $r->post(AdminAction::class . '::post', '/gendex-generator/save', 
+            new AdminAction($this));
+    });
+}
+
     /**
      * Pad naar de resources-map van de module.
      */
     public function resourcesFolder(): string
     {
-        return __DIR__ . '/resources/';
+        return __DIR__ . DIRECTORY_SEPARATOR . 'resources' . DIRECTORY_SEPARATOR;
     }
- 
 }
 
 return new GendexGeneratorModule();
