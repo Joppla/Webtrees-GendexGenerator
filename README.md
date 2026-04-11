@@ -4,7 +4,8 @@
 A Webtrees module to generate `gendex.txt` files for family trees.
 
 ## Notes
-This repo is in test phase.
+* This repo is in test phase.
+* A Dutch version of this README is available: [README.nl.md](README.nl.md).
 
 ## Installation
 1. Download the latest `Webtrees-GendexGenerator.zip`.
