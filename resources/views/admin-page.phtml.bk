@@ -1,0 +1,43 @@
+<?php
+use Aura\Router\RouterContainer;
+use Fisharebest\Webtrees\I18N;
+use Fisharebest\Webtrees\Http\RequestHandlers\ControlPanel;
+
+
+?>
+<?php /*$this->layout = 'layouts/administration'; */ ?>
+<?= view('components/breadcrumbs', ['links' => [route(ControlPanel::class) => I18N::translate('Control panel'), $title]]) ?>
+
+
+<div>
+    <h1><?= e($title) ?></h1>
+    <p><?= I18N::translate('Welcome to the configuration page of the Gendex Generator module.') ?></p>
+    <p><?= I18N::translate('A GENDEX file is an index of personal data and a short page URL. It is used to index a genealogical website by a genealogical search engine. The idea behind it is to join numerous pedigrees of individual genealogical researchers to a central database, while the individual genealogical researchers are still keeping  all control over their data. Unlike a GEDCOM file a GENDEX file contains no information about the family relationships between individuals. This means the file is useless without the corresponding website.') ?></p>
+		<p><?= I18N::translate('The GENDEX file will only contain public data.') ?></p>
+		
+    <h2><?= I18N::translate('Which family trees should be included in the GENDEX file?') ?></h2>
+ 
+    <form method="post" action="<?= e(route('module', ['module' => $module_name, 'action' => 'Admin'])) ?>">
+        <?= csrf_field() ?>
+        <?php foreach ($all_trees as $tree_id => $tree_name): ?>
+            <label>
+                <input
+                    type="checkbox"
+                    name="selected_trees[]"
+                    value="<?= e($tree_id) ?>"
+                    class="me-3"
+                    <?= in_array($tree_id, $selected_trees) ? 'checked' : '' ?>
+                    
+                >
+                <?= e($tree_name) ?>
+            </label><br>
+        <?php endforeach; ?>
+        <br>
+        <button type="submit" class="btn btn-primary me-3">
+            <?= $button_text ?>
+        </button>
+        <a href="/admin" class="btn btn-secondary text-decoration-none">
+            <?= I18N::translate('Back to control panel') ?>
+        </a>
+    </form>
+</div>

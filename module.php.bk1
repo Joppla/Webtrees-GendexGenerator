@@ -1,0 +1,165 @@
+<?php
+
+declare(strict_types=1);
+
+namespace Joppla\Modules\GendexGenerator;
+
+use Fisharebest\Webtrees\Webtrees;
+use Fisharebest\Webtrees\Module\AbstractModule;
+use Fisharebest\Webtrees\Module\ModuleConfigInterface;
+use Fisharebest\Webtrees\Module\ModuleConfigTrait;
+use Fisharebest\Webtrees\Module\ModuleCustomInterface;
+use Fisharebest\Webtrees\Module\ModuleCustomTrait;
+use Fisharebest\Webtrees\I18N;
+use Fisharebest\Localization\Translation;
+use Fisharebest\Webtrees\FlashMessages;
+use Fisharebest\Webtrees\View;
+use Fisharebest\Webtrees\Http\ViewResponse;
+use Fisharebest\Webtrees\Tree;
+use Fisharebest\Webtrees\Registry;
+use Fisharebest\Webtrees\Services\TreeService;
+use Psr\Http\Message\ResponseInterface;
+use Psr\Http\Message\ServerRequestInterface;
+use function redirect;
+
+// use const Fisharebest\Webtrees\WT_ROOT;
+
+class GendexGeneratorModule extends AbstractModule implements ModuleCustomInterface, ModuleConfigInterface
+{
+    use ModuleCustomTrait;
+    use ModuleConfigTrait;
+
+    public function title(): string
+    {
+        return I18N::translate('Gendex Generator');
+    }
+
+    public function description(): string
+    {
+        return I18N::translate('Generates a gendex.txt file for your family tree.');
+    }
+
+    public function customModuleAuthorName(): string
+    {
+        return 'Joppla';
+    }
+
+    public function customModuleVersion(): string
+    {
+        return '1.0.0';
+    }
+
+    public function customModuleSupportUrl(): string
+    {
+        return 'https://github.com/Joppla/Webtrees-GendexGenerator';
+    }
+
+    public function customTranslations(string $language): array
+    {
+/*        $languageFile = $this->resourcesFolder() . 'lang/' . $language . '.po';
+        return file_exists($languageFile) ? (new Translation($languageFile))->asArray() : [];*/
+        $base = $this->resourcesFolder() . 'lang/' . $language;
+        $languageFile = file_exists($base . '.mo') ? $base . '.mo' : ($base . '.po');
+        return file_exists($languageFile) ? (new Translation($languageFile))->asArray() : [];
+
+    }
+
+/*    public function customTranslations(string $language): array
+    {
+        $translations = [
+            // Engels (standaard)
+            'en' => [
+              'Gendex Generator' => 'Gendex Generator',
+              'Generates a gendex.txt file for your family tree.' => 'Generates a gendex.txt file for your family tree.',
+            ],
+
+            // Nederlands
+            'nl' => [
+                'Gendex Generator' => 'Gendex Generator',
+                'Generates a gendex.txt file for your family tree.' => 'Genereert een gendex.txt-bestand voor je stamboom.',
+            ],
+        ];
+
+        return $translations[$language] ?? $translations['en'];
+    }
+
+*/
+    // Initiëren van de configuratie-/admin-pagina
+    public function getAdminAction(ServerRequestInterface $request): ResponseInterface
+    {
+        $treeService = Registry::container()->get(TreeService::class);
+        $allTrees = $treeService->all()->mapWithKeys(fn($t) => [$t->id() => $t->name() . ' - ' . $t->title()])->toArray();
+
+        $gendexFilePath = Webtrees::ROOT_DIR . 'gendex.txt';
+        $buttonText = file_exists($gendexFilePath)
+            ? I18N::translate('Update GENDEX text file')
+            : I18N::translate('Create GENDEX text file');                
+            
+        // Haal de geselecteerde stambomen uit de query parameters
+        $queryParams = $request->getQueryParams();
+        $selectedTrees = $queryParams['selected_trees'] ?? [];      
+        
+        $this->layout = 'layouts/administration';
+        
+            
+        return $this->viewResponse($this->name() . '::admin-page', [
+                'title' => $this->title(),
+                'all_trees' => $allTrees,   
+                'button_text' => $buttonText,
+                'module_name' => $this->name(), 
+                'selected_trees' => $selectedTrees,
+            ]
+        );
+    }
+    
+    // Verwerken van de acties uit de admin-pagina
+    public function postAdminAction(ServerRequestInterface $request): ResponseInterface
+    {
+        // Haal de geselecteerde stambomen op uit het formulier
+        $selectedTrees = $request->getParsedBody()['selected_trees'] ?? [];
+    
+        // Controleer of er ten minste één stamboom is geselecteerd
+        if (empty($selectedTrees)) {
+            FlashMessages::addMessage(I18N::translate('No family trees selected.'), 'danger');
+        } else {
+            $treeService = Registry::container()->get(TreeService::class);
+            $selectedTreeNames = [];
+        
+            foreach ($selectedTrees as $treeId) {
+                $tree = $treeService->find((int)$treeId);
+                if ($tree) {
+                    $selectedTreeNames[] = '<li>' . e($tree->title()) . '</li>';
+                }
+            }
+            $selectedTreeNamesString = '<ul style="list-style-type: disc; padding-left: 1em;">' . implode('', $selectedTreeNames) . '</ul>';
+            FlashMessages::addMessage(I18N::translate('The following family trees have been selected: %s', $selectedTreeNamesString), 'success');
+        }
+                
+        // Voeg de geselecteerde stambomen toe aan de query parameters van de redirect-URL
+        $queryParams = http_build_query(['selected_trees' => $selectedTrees]);
+        return redirect(route('module', ['module' => $this->name(), 'action' => 'Admin']) . '?' . $queryParams);
+    }    
+/*    public function postAdminAction(ServerRequestInterface $request): ResponseInterface
+    {
+        // Hier kun je later de configuratie opslaan
+        FlashMessages::addMessage(I18N::translate('The preferences for the module “%s” have been updated.', $this->title()), 'success');
+    
+        return redirect(route('admin-module-' . $this->name()));
+    }*/
+
+
+
+
+    public function boot(): void
+    {
+        View::registerNamespace($this->name(), $this->resourcesFolder() . 'views/');
+    }
+
+    public function resourcesFolder(): string
+    {
+        return __DIR__ . '/resources/';
+    }
+ 
+}
+
+return new GendexGeneratorModule();

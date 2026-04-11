@@ -1,0 +1,56 @@
+msgid ""
+msgstr ""
+"Project-Id-Version: gendexgenerator\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-03-31 00:00+0000\n"
+"PO-Revision-Date: 2026-03-31 00:00+0000\n"
+"Last-Translator: \n"
+"Language-Team: Dutch\n"
+"Language: nl\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+
+#: module.php:30
+msgid "Gendex Generator"
+msgstr "Gendex Generator"
+
+#: module.php:34
+msgid "Generates a gendex.txt file for your family tree."
+msgstr "Genereert een gendex.txt-bestand voor je stamboom."
+
+#: module.php:64
+msgid "Update GENDEX text file"
+msgstr "GENDEX-tekstbestand bijwerken"
+
+#: module.php:66
+msgid "Create GENDEX text file"
+msgstr "GENEX-tekstbestand aanmaken"
+
+#: module.php:77
+msgid "The preferences for the module “%s” have been updated."
+msgstr "De voorkeuren voor de module “%s” zijn bijgewerkt."
+
+#: resources/views/admin-page.php:3
+msgid "Control panel"
+msgstr "Controle paneel"
+
+#: resources/views/admin-page.php:8
+msgid "Welcome to the configuration page of the Gendex Generator module."
+msgstr "Welkom bij de configuratiepagina van de Gendex Generator-module."
+
+#: resources/views/admin-page.php:9
+msgid "A GENDEX file is an index of personal data and a short page URL. It is used to index a genealogical website by a genealogical search engine. The idea behind it is to join numerous pedigrees of individual genealogical researchers to a central database, while the individual genealogical researchers are still keeping  all control over their data. Unlike a GEDCOM file a GENDEX file contains no information about the family relationships between individuals. This means the file is useless without the corresponding website."
+msgstr "Een GENDEX-bestand is een index van persoonsgegevens en een korte paginaplink. Het wordt gebruikt om een genealogische website te indexeren door een genealogische zoekmachine. Het idee is om talrijke stambomen van individuele onderzoekers te koppelen aan een centrale database, terwijl de individuele onderzoekers alle controle over hun gegevens behouden. In tegenstelling tot een GEDCOM-bestand bevat een GENDEX-bestand geen informatie over familiebanden tussen personen. Dit betekent dat het bestand nutteloos is zonder de bijbehorende website."
+
+#: resources/views/admin-page.php:10
+msgid "The GENDEX file will only contain public data."
+msgstr "Het GENDEX-bestand bevat alleen openbare gegevens."
+
+#: resources/views/admin-page.php:12
+msgid "Which family trees should be included in the GENDEX file?"
+msgstr "Welke stambomen moeten in het GENDEX-bestand worden opgenomen?"
+
+#: resources/views/admin-page.php:24
+msgid "Back to control panel"
+msgstr "Terug naar het configuratiescherm"

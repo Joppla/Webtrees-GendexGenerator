@@ -1,0 +1,56 @@
+msgid ""
+msgstr ""
+"Project-Id-Version: gendexgenerator\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-03-31 00:00+0000\n"
+"PO-Revision-Date: 2026-03-31 00:00+0000\n"
+"Last-Translator: \n"
+"Language-Team: Polish\n"
+"Language: pl\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+
+#: module.php:30
+msgid "Gendex Generator"
+msgstr "Generator Gendex"
+
+#: module.php:34
+msgid "Generates a gendex.txt file for your family tree."
+msgstr "Generuje plik gendex.txt dla Twojego drzewa genealogicznego."
+
+#: module.php:64
+msgid "Update GENDEX text file"
+msgstr "Aktualizuj plik GENDEX"
+
+#: module.php:66
+msgid "Create GENDEX text file"
+msgstr "Utwórz plik GENDEX"
+
+#: module.php:77
+msgid "The preferences for the module “%s” have been updated."
+msgstr "Preferencje modułu „%s” zostały zaktualizowane."
+
+#: resources/views/admin-page.php:3
+msgid "Control panel"
+msgstr "Panel sterowania"
+
+#: resources/views/admin-page.php:8
+msgid "Welcome to the configuration page of the Gendex Generator module."
+msgstr "Witamy na stronie konfiguracji modułu Generator Gendex."
+
+#: resources/views/admin-page.php:9
+msgid "A GENDEX file is an index of personal data and a short page URL. It is used to index a genealogical website by a genealogical search engine. The idea behind it is to join numerous pedigrees of individual genealogical researchers to a central database, while the individual genealogical researchers are still keeping  all control over their data. Unlike a GEDCOM file a GENDEX file contains no information about the family relationships between individuals. This means the file is useless without the corresponding website."
+msgstr "Plik GENDEX jest indeksem danych osobowych i krótkich adresów stron. Służy do indeksowania strony genealogicznej przez wyszukiwarkę genealogiczną. Ideą jest połączenie wielu drzew genealogicznych poszczególnych badaczy w centralnej bazie danych, przy jednoczesnym zachowaniu przez nich pełnej kontroli nad swoimi danymi. W przeciwieństwie do pliku GEDCOM, plik GENDEX nie zawiera informacji o relacjach rodzinnych między osobami. Oznacza to, że plik jest bezużyteczny bez odpowiadającej mu strony internetowej."
+
+#: resources/views/admin-page.php:10
+msgid "The GENDEX file will only contain public data."
+msgstr "Plik GENDEX będzie zawierał tylko dane publiczne."
+
+#: resources/views/admin-page.php:12
+msgid "Which family trees should be included in the GENDEX file?"
+msgstr "Które drzewa genealogiczne powinny zostać uwzględnione w pliku GENDEX?"
+
+#: resources/views/admin-page.php:24
+msgid "Back to control panel"
+msgstr "Powrót do panelu sterowania"

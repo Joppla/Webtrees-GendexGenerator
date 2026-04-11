@@ -3,13 +3,169 @@ use Aura\Router\RouterContainer;
 use Fisharebest\Webtrees\I18N;
 use Fisharebest\Webtrees\Http\RequestHandlers\ControlPanel;
 
+use Joppla\Modules\GendexGenerator\AdminAction;
 
 ?>
-<?php $this->layout = 'layouts/administration'; ?>
+
 <?= view('components/breadcrumbs', ['links' => [route(ControlPanel::class) => I18N::translate('Control panel'), $title]]) ?>
 
 
-<div>
-    <h1><?= e($title) ?></h1>
-    <p>Welkom bij de configuratiepagina van de Gendex Generator-module.</p>
+<div style="font-size : 1em">
+    <h2><?= e($title) ?></h2>
+    <p>
+      <?= I18N::translate('Welcome to the configuration page of the Gendex Generator module.') ?>
+    </p>
+    <p>
+      <?= I18N::translate(
+        'A GENDEX file is an index of personal data and a short page URL. It is used to index a genealogical website by a genealogical search engine. The idea behind it is to join numerous pedigrees of individual genealogical researchers to a central database, while the individual genealogical researchers are still keeping  all control over their data. Unlike a GEDCOM file a GENDEX file contains no information about the family relationships between individuals. This means the file is useless without the corresponding website.'
+      ) ?>
+    </p>
+    <p><?= I18N::translate('The GENDEX file will only contain public data.') ?></p>
+
+    <hr>
+
+    <div id="settings">
+      <form method="post" action="<?= route(AdminAction::class . '::post') ?>">
+
+        <h3><?= I18N::translate('Which trees and names should be included in the GENDEX file?') ?></h3>
+
+        <?= csrf_field() ?>
+
+        <div class="row mb-3">
+          <div class="col-sm-3">
+            <?= I18N::translate('Trees') ?>
+          </div>
+          <div class="col-sm-9">
+            <?php foreach ($all_trees as $tree_id => $tree_name): ?>
+                <?= view('components/checkbox', [
+                    'name'     => 'selected_trees[]',
+                    'value'    => $tree_id,
+                    'label'    => $tree_name,
+                    'checked'  => in_array($tree_id, $selected_trees),
+                    'id'       => 'tree-' . $tree_id,
+                    'attrs'    => ['class' => 'me-3']
+                ]) ?>
+            <?php endforeach; ?>
+            <div class="form-text">
+                <?= I18N::translate("Select the Trees to be added to the GENDEX file") ?>
+            </div>
+          </div>
+        </div>
+        
+        <div class="row mb-3">
+          <div class="col-sm-3">
+            <?= I18N::translate('Add all names?') ?>
+          </div>
+          <div class="col-sm-9">
+            <?= view('components/radios-inline', [
+              'name'     => 'add_all_names',
+              'options'  => [ I18N::translate('yes') , I18N::translate('no') ],
+              'selected' => $selected_add_all_names, // component verwacht index 0/1
+              'attrs'    => ['class' => 'me-3'] // optioneel
+            ]) ?>
+            <div class="form-text">
+              <?= I18N::translate(
+                'If you choose "no", only an individual\'s primary name will be added to the GENDEX file. If you choose "yes", all of an individual\'s names will be added to the GENDEX file.'
+              ) ?>
+            </div>
+          </div>
+        </div>
+
+        <div class="row mb-3">
+          <div class="col-sm-3">
+            <?= I18N::translate('Convert diacritical marks?') ?>
+          </div>
+          <div class="col-sm-9">
+            <?= view('components/radios-inline', [
+              'name'     => 'diacritical',
+              'options'  => [ I18N::translate('yes') , I18N::translate('no') ],
+              'selected' => $selected_diacritical, // component verwacht index 0/1
+              'attrs'    => ['class' => 'me-3'] // optioneel
+            ]) ?>
+
+            <div class="form-text">
+              <?= I18N::translate(
+                'If you choose "no", the name or names will be left unchanged. If you choose "yes", all the diacritical marks (f.e. à, é, è, ê, ß, æ, œ, ą, ł ) in de names will will be converted to there base letters without diacritics (a, e, e, e, ss, ae, oe, a, l). There will be added an extra line in the GENDEX file with the converted name.'
+              ) ?>
+            </div>
+          </div>
+        </div>
+        <p class="alert alert-info">
+          <?= I18N::translate(
+            'Note: if you choose to add all names or to convert the diacritics, there will be added a sequence number to the GENDEX link. The sequence number is formatted as "?0001" (f.e.: <code>https://mydomain.com/tree/myfamilytree/X496?0001</code>). In general this has no impact for the link, but if it give a problem, please choose to "no" for both items.'
+          ) ?>
+        </p>
+
+        <button type="submit" class="btn btn-primary me-3">
+          <?= $button_text ?>
+        </button>
+          <a href="/admin" class="btn btn-secondary text-decoration-none">
+            <?= I18N::translate('Back to ') ?><?= I18N::translate('Control panel') ?>
+          </a>
+      </form>
+    </div>
+
+    <hr>
+    <!-- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ -->
+    <?php if (!empty($gendex_exists)): ?>
+    
+        <h3><?= I18N::translate('We found a GENDEX file') ?></h3>
+        <p>
+            <?= I18N::translate('Click on this link to view your GENDEX file or to copy the link to add it to the GENDEX search engine:') ?>
+            <a href="<?= e($gendex_url) ?>" target="_blank" rel="noopener noreferrer">
+                <?= e($gendex_url) ?>
+            </a>
+        <br>
+
+            <?= I18N::translate('Click on this link to download your GENDEX file:') ?>
+            <a href="<?= e($gendex_url) ?>" download>
+                gendex.txt
+            </a>
+        </p>
+        <p class="alert alert-info">
+            <?= I18N::translate(
+                'Note: It is possible that your gendex.txt is cached in the browser. You will see the same as the previous version.'
+            ) ?>
+            <br>
+            <?= I18N::translate(
+                'You can copy the link to a private browser window or close the browser complete and re-open.'
+            ) ?>
+        </p>
+
+        <hr>
+
+        <h3><?= I18N::translate('Add your GENDEX file to the Search Engine') ?></h3>
+        <p><?= I18N::translate('To tell search engines that a GENDEX file is available, you should submit the url above to the genealogical search engine of your choice.') ?></p>
+        <p><?= I18N::translate('The search engines below are known to accept the GENDEX textfile created by this module:') ?></p>
+        <ul>
+             <li>
+                <a href="https://www.stamboomzoeker.nl/en" target="_blank" rel="noopener noreferrer">Familytreeseeker</a> (<?= I18N::translate('English/International') ?>)
+            </li>
+            <li>
+                <a href="https://www.stamboomzoeker.nl" target="_blank" rel="noopener noreferrer">Stamboomzoeker</a> (<?= I18N::translate('Dutch') ?>)
+            </li>
+        </ul>
+        <p style="margin-bottom:.5em;">
+          <?= I18N::translate(
+            'You need this url as general url to the individual pages when submitting to Stamboomzoeker or Familytreeseeker:'
+          ); ?>
+        </p>
+        <p style="margin-bottom:0;">
+          <input 
+            id="copyInput" 
+            value="<?= e(rtrim($WT_BASE_URL ?? '', '/')) ?>/tree/" 
+            readonly 
+            onclick="this.select()"
+            style="display:inline-block;width:100%;padding:.5em;border:1px solid #ccc;margin-bottom:0;"
+          >
+          <div class="form-text" style="margin-top:0;">
+            <?= I18N::translate("Click on text to select in once.") ?>
+          </div>
+        </p>
+        <p class="alert alert-info">
+            <?= I18N::translate('Note: the GENDEX text file is not automatically updated. If you have made changes to your tree you need to update the GENDEX text file manually by clicking on the button. You do <b>not</b> need to update your subscription at the genealogical search engine.') ?>
+        </p>
+        <hr>
+    <?php endif; ?>
+
 </div>
