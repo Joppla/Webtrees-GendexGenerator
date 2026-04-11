@@ -1,5 +1,7 @@
 # Ignoreer backup-bestanden (eindigend op ~)
 *~
+*.bk*
+*.txt
 
 # Ignoreer logbestanden
 *.log
