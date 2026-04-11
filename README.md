@@ -7,7 +7,7 @@ A Webtrees module to generate `gendex.txt` files for family trees.
 This repo is in test phase.
 
 ## Installation
-1. Download the latest Webtrees-GendexGenerator.zip.
+1. Download the latest `Webtrees-GendexGenerator.zip`.
 2. Unizp the zip.
 3. Place the `gendex-generator` directory in the `modules_v4` directory of your Webtrees installation.
 4. Enable the module in Webtrees under **Administration > Modules**.
