@@ -20,12 +20,21 @@ class MakeGendex
     private string $tmpSuffix = '.tmp';
     private string $bkSuffix = '.bk';
     private int $batchSize = 500;
+    private bool $addAllNames = false;
+    private bool $diacritical = false;
 
-    public function __construct(?TreeService $treeService = null, ?string $outputDir = null, int $batchSize = 500)
-    {
+    public function __construct(
+        ?TreeService $treeService = null, 
+        ?string $outputDir = null, 
+        int $batchSize = 500,
+        bool $addAllNames = false,
+        bool $diacritical = false
+    ) {
         $this->treeService = $treeService ?? Registry::container()->get(TreeService::class);
         $this->outputDir = rtrim($outputDir ?? Webtrees::ROOT_DIR, DIRECTORY_SEPARATOR) . DIRECTORY_SEPARATOR;
         $this->batchSize = max(1, $batchSize);
+        $this->addAllNames = $addAllNames;
+        $this->diacritical = $diacritical;
     }
 
     private function log(string $message, string $fileName = 'gendex_log.txt'): void
@@ -114,7 +123,12 @@ class MakeGendex
     private function formatLineFromNameRow(Tree $tree, object $nameRow, Individual $individual): string
     {
         $xref = (string)$nameRow->n_id;
+
         $reference = $tree->name() . '/individual/' . $xref;
+        
+        if ($this->addAllNames) {
+            $reference .= '?' . str_pad((string)$nameRow->n_num, 2, '0', STR_PAD_LEFT);
+        }
 
         $given = isset($nameRow->n_givn) ? trim(strip_tags((string)$nameRow->n_givn)) : '';
         $surname = isset($nameRow->n_surname) ? strtoupper(trim(strip_tags((string)$nameRow->n_surname))) : '';
@@ -160,6 +174,10 @@ class MakeGendex
         while (true) {
             $query = DB::table('name')
                 ->where('n_file', '=', $tree->id())
+                ->where('n_type', '=', 'NAME')
+                ->when(!$this->addAllNames, function($q) {
+                    return $q->where('n_num', '=', 0);
+                })
                 ->orderBy('n_id')
                 ->limit($batchSize);
 
@@ -183,8 +201,12 @@ class MakeGendex
         }
     }
 
-    public function generateGendexFile(array $selectedTrees): void
+    public function generateGendexFile(array $selectedTrees, bool $addAllNames = false, bool $diacritical = false): void
     {
+        // Stel de opties in als ze zijn doorgegeven
+        $this->addAllNames = $addAllNames;
+        $this->diacritical = $diacritical;
+        
         $tmpPath = $this->outputDir . $this->gendexFilename . $this->tmpSuffix;
         $finalPath = $this->outputDir . $this->gendexFilename;
         $bkPath = $finalPath . $this->bkSuffix;
@@ -220,12 +242,15 @@ class MakeGendex
 
                 $this->iterateNames($tree, function($nameRow) use ($tree, $handleMain, $handleFiltered) {
                     $nId = (string)$nameRow->n_id;
+                    
+                    // Filter op n_num als add_all_names = false
+                    // if (!$this->addAllNames && (int)$nameRow->n_num !== 0) {
+                    //     return; // Sla deze naam over
+                    // }
 
                     // Probeer Individual-object te maken; voorkomt M/N/andere records
                     $individual = Registry::individualFactory()->make($nId, $tree);
                     if (! $individual) {
-// $givn = isset($nameRow->n_givn) ? $this->sanitizeFieldForOutput((string)$nameRow->n_givn) : '';
-
                         $givn = isset($nameRow->n_givn) ? $this->sanitizeFieldForOutput((string)$nameRow->n_givn) : '';
                         $surn = isset($nameRow->n_surname) ? $this->sanitizeFieldForOutput((string)$nameRow->n_surname) : '';
                         $reason = 'no_individual';

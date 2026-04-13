@@ -139,16 +139,15 @@ class GendexGeneratorModule extends AbstractModule implements ModuleCustomInterf
 
         // Gebruik de administratie-layout van webtrees
         $this->layout = 'layouts/administration';
-
+        
+        // Dit moet later uit de aanwezige settings komen
         $selectedAddAllNames = 0; // 0 = yes, 1 = no
         $selectedDiacritical  = 0; // 0 = yes, 1 = no
-
 
         // Render de admin-page view met data uit de DTO
         return $this->viewResponse($this->name() . '::admin-page', [
             'title' => $this->title(),
             'all_trees' => $dto->allTrees,
-            'button_text' => $dto->buttonText,
             'module_name' => $this->name(),
             'selected_trees' => $dto->selectedTrees,
             'gendex_exists' => $dto->gendexExists,
@@ -156,7 +155,6 @@ class GendexGeneratorModule extends AbstractModule implements ModuleCustomInterf
             'WT_BASE_URL' => $dto->baseUrl,
             'selected_add_all_names' => $selectedAddAllNames,
             'selected_diacritical'  => $selectedDiacritical,
-
         ]);
     }
 

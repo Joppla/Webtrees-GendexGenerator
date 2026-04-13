@@ -43,13 +43,22 @@ class AdminFormHandler
         // Haal en valideer de geselecteerde stamboom-id's uit het formulier
         $selected = $this->validateSelectedTrees($request->getParsedBody()['selected_trees'] ?? []);
 
+        // Haal de radio button waarden op
+        // De waarde van 'add_all_names' is '0' (ja) of '1' (nee)
+        $addAllNamesValue = $request->getParsedBody()['add_all_names'] ?? '1';
+        $addAllNames = ($addAllNamesValue === '0'); // true als '0' (= ja), false als '1' (= nee)
+        
+        $diacriticalValue = $request->getParsedBody()['diacritical'] ?? '1';
+        $diacritical = ($diacriticalValue === '0'); // true als '0' (= ja), false als '1' (= nee)
+
+
         if (empty($selected)) {
             // Geen selectie: toon een foutmelding (danger)
             $this->addFlash('No family trees selected.', 'danger');
         } else {
             // Toon welke stambomen geselecteerd zijn en genereer het bestand
             $this->notifySelectedTrees($selected);
-            $this->generateGendex($selected);
+            $this->generateGendex($selected, $addAllNames, $diacritical);
             $this->addFlash('The GENDEX file has been generated successfully.', 'success');
         }
 
@@ -112,10 +121,10 @@ class AdminFormHandler
      * Wrapper die de bestaande MakeGendex aanroept om het bestand te genereren.
      * - hier kun je later error handling of logging toevoegen
      */
-    private function generateGendex(array $selected): void
+    private function generateGendex(array $selected, bool $addAllNames, bool $diacritical): void
     {
         $generator = new MakeGendex();
-        $generator->generateGendexFile($selected);
+        $generator->generateGendexFile($selected, $addAllNames, $diacritical);
     }
 
     /**

@@ -51,7 +51,7 @@ use Joppla\Modules\GendexGenerator\AdminAction;
             </div>
           </div>
         </div>
-        
+
         <div class="row mb-3">
           <div class="col-sm-3">
             <?= I18N::translate('Add all names?') ?>
@@ -97,18 +97,19 @@ use Joppla\Modules\GendexGenerator\AdminAction;
         </p>
 
         <button type="submit" class="btn btn-primary me-3">
-          <?= $button_text ?>
+            <?= I18N::translate(!empty($gendex_exists) ? 'Replace GENDEX text file' : 'Create GENDEX text file') ?>
         </button>
-          <a href="/admin" class="btn btn-secondary text-decoration-none">
-            <?= I18N::translate('Back to ') ?><?= I18N::translate('Control panel') ?>
-          </a>
+
+        <a href="/admin" class="btn btn-secondary text-decoration-none">
+          <?= I18N::translate('Back to ') ?><?= I18N::translate('Control panel') ?>
+        </a>
       </form>
     </div>
 
     <hr>
     <!-- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ -->
     <?php if (!empty($gendex_exists)): ?>
-    
+
         <h3><?= I18N::translate('We found a GENDEX file') ?></h3>
         <p>
             <?= I18N::translate('Click on this link to view your GENDEX file or to copy the link to add it to the GENDEX search engine:') ?>
@@ -138,7 +139,7 @@ use Joppla\Modules\GendexGenerator\AdminAction;
         <p><?= I18N::translate('To tell search engines that a GENDEX file is available, you should submit the url above to the genealogical search engine of your choice.') ?></p>
         <p><?= I18N::translate('The search engines below are known to accept the GENDEX textfile created by this module:') ?></p>
         <ul>
-             <li>
+            <li>
                 <a href="https://www.stamboomzoeker.nl/en" target="_blank" rel="noopener noreferrer">Familytreeseeker</a> (<?= I18N::translate('English/International') ?>)
             </li>
             <li>
@@ -151,10 +152,10 @@ use Joppla\Modules\GendexGenerator\AdminAction;
           ); ?>
         </p>
         <p style="margin-bottom:0;">
-          <input 
-            id="copyInput" 
-            value="<?= e(rtrim($WT_BASE_URL ?? '', '/')) ?>/tree/" 
-            readonly 
+          <input
+            id="copyInput"
+            value="<?= e(rtrim($WT_BASE_URL ?? '', '/')) ?>/tree/"
+            readonly
             onclick="this.select()"
             style="display:inline-block;width:100%;padding:.5em;border:1px solid #ccc;margin-bottom:0;"
           >

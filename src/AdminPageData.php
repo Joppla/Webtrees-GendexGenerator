@@ -2,7 +2,6 @@
 namespace Joppla\Modules\GendexGenerator;
 
 use Psr\Http\Message\ServerRequestInterface;
-use Fisharebest\Webtrees\I18N;
 use Fisharebest\Webtrees\Services\TreeService;
 
 /**
@@ -12,7 +11,6 @@ class AdminPageDto
 {
     public function __construct(
         public array $allTrees,
-        public string $buttonText,
         public array $selectedTrees,
         public bool $gendexExists,
         public string $gendexUrl,
@@ -27,18 +25,15 @@ class AdminPageData
 {
     private TreeService $treeService;
     private string $rootDir;
-    // private ?I18N $i18n;
 
     /**
      * @param TreeService $treeService  Service om stambomen op te halen
      * @param string $rootDir           Webtrees root directory (Webtrees::ROOT_DIR)
-     * @param I18N|null $i18n           Optionele I18N instance
      */
     public function __construct(TreeService $treeService, string $rootDir)
     {
         $this->treeService = $treeService;
         $this->rootDir = rtrim($rootDir, DIRECTORY_SEPARATOR) . DIRECTORY_SEPARATOR;
-        /*$this->i18n = $i18n;*/
     }
 
     /**
@@ -53,7 +48,6 @@ class AdminPageData
     
         return new AdminPageDto(
             $this->buildAllTrees(),
-            $this->buildButtonText(), // blijft werken omdat buildButtonText gebruikt $this->rootDir
             $this->getSelectedTrees($request),
             $gendexExists,
             $gendexUrl,
@@ -71,20 +65,6 @@ class AdminPageData
             ->mapWithKeys(fn($t) => [$t->id() => $t->name() . ' - ' . $t->title()])
             ->toArray();
     }
-
-    /**
-     * Bepaalt de knoptekst op basis van of gendex.txt bestaat
-     */
-    // In module.php: niet meer nodig
-// In AdminPageData: altijd I18N::translate() gebruiken
-private function buildButtonText(): string
-{
-    $path = $this->rootDir . 'gendex.txt';
-    $exists = file_exists($path);
-    return $exists
-        ? I18N::translate('Replace GENDEX text file')
-        : I18N::translate('Create GENDEX text file');
-}
 
     /**
      * Haalt geselecteerde stambomen uit de query-parameters (fallback leeg array)

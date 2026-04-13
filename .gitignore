@@ -2,6 +2,8 @@
 *~
 *.bk*
 *.txt
+*.sh
+*.pdf
 
 # Ignoreer logbestanden
 *.log
