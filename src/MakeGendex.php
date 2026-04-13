@@ -243,11 +243,6 @@ class MakeGendex
                 $this->iterateNames($tree, function($nameRow) use ($tree, $handleMain, $handleFiltered) {
                     $nId = (string)$nameRow->n_id;
                     
-                    // Filter op n_num als add_all_names = false
-                    // if (!$this->addAllNames && (int)$nameRow->n_num !== 0) {
-                    //     return; // Sla deze naam over
-                    // }
-
                     // Probeer Individual-object te maken; voorkomt M/N/andere records
                     $individual = Registry::individualFactory()->make($nId, $tree);
                     if (! $individual) {

@@ -90,6 +90,53 @@ use Joppla\Modules\GendexGenerator\AdminAction;
             </div>
           </div>
         </div>
+
+        <div class="row mb-3">
+          <div class="col-sm-3">
+            <?= I18N::translate('Add the dates in "YYYY" or "dd MMM YYYY" format?') ?>
+          </div>
+          <div class="col-sm-9">
+            <?= view('components/radios', [
+              'name'     => 'dateFormat',
+              'options'  => [ I18N::translate('YYYY') , I18N::translate('dd MMM YYYY') ],
+              'selected' => 0, // component verwacht index 0/1
+              'attrs'    => ['class' => 'me-3'] // optioneel
+            ]) ?>
+
+            <div class="form-text">
+              <?= I18N::translate(
+                'Familytreeseeker shows only the YYYY format. Using the YYYY format allows you to share less about your research work to trigger interested people to visit your website.'
+              ) ?>
+            </div>
+          </div>
+        </div>
+
+        <div class="row mb-3">
+          <div class="col-sm-3">
+            <?= I18N::translate('Show Birthplace, Deathplace or both') ?>
+          </div>
+          <div class="col-sm-9">
+            <?= view('components/radios', [
+              'name'     => 'places',
+              'options'  => [ 
+                  I18N::translate('Don\'t show place names') , 
+                  I18N::translate('Show only the birthplace') ,
+                  I18N::translate('Show only the death place') ,
+                  I18N::translate('Show both') 
+              ],
+              'selected' => 3, // component verwacht index 0/1
+              'attrs'    => ['class' => 'me-3'] // optioneel
+            ]) ?>
+
+            <div class="form-text">
+              <?= I18N::translate(
+                'This option allows you to share less about your research work to trigger interested people to visit your website.'
+              ) ?>
+            </div>
+          </div>
+        </div>
+
+                
         <p class="alert alert-info">
           <?= I18N::translate(
             'Note: if you choose to add all names or to convert the diacritics, there will be added a sequence number to the GENDEX link. The sequence number is formatted as "?0001" (f.e.: <code>https://mydomain.com/tree/myfamilytree/X496?0001</code>). In general this has no impact for the link, but if it give a problem, please choose to "no" for both items.'
