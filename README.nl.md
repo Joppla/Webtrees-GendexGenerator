@@ -7,7 +7,7 @@ Een Webtrees-module om `gendex.txt`-bestanden te genereren voor stambomen.
 * Deze repository bevindt zich in de testfase.
 
 ## Installatie
-1. Download het laatste `Webtrees-GendexGenerator.zip`-bestand.
+1. Download het laatste `[Webtrees-GendexGenerator.zip](https://codeberg.org/Joppla/Webtrees-GendexGenerator/raw/branch/main/Webtrees-GendexGenerator-latest.zip)`-bestand.
 2. Pak het zip-bestand uit.
 3. Plaats de `gendex-generator`-map in de `modules_v4`-map van je Webtrees-installatie.
 4. Activeer de module in Webtrees onder **Beheer > Modules**.
