@@ -1,4 +1,4 @@
-![Module Versie](https://img.shields.io/badge/versie-1.0.1-blue) ![Webtrees Versie](https://img.shields.io/badge/Webtrees-2.2.x-green) ![Licentie: GPL v3](https://img.shields.io/badge/Licentie-GPLv3-blue.svg)
+![Module Versie](https://img.shields.io/badge/versie-1.0.2-blue) ![Webtrees Versie](https://img.shields.io/badge/Webtrees-2.2.x-green) ![Licentie: GPL v3](https://img.shields.io/badge/Licentie-GPLv3-blue.svg)
 
 # Webtrees Gendex Generator
 Een Webtrees-module om `gendex.txt`-bestanden te genereren voor stambomen.

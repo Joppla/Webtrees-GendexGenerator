@@ -102,7 +102,7 @@ class GendexGeneratorModule extends AbstractModule implements ModuleCustomInterf
      */
     public function customModuleVersion(): string
     {
-        return '1.0.0';
+        return '1.0.2';
     }
 
     /**
