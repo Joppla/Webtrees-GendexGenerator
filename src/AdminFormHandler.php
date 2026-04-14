@@ -51,6 +51,9 @@ class AdminFormHandler
         $diacriticalValue = $request->getParsedBody()['diacritical'] ?? '1';
         $diacritical = ($diacriticalValue === '0'); // true als '0' (= ja), false als '1' (= nee)
 
+        $chooseDateFormatValue = $request->getParsedBody()['chooseDateFormat'] ?? '1';
+        $chooseDateFormat = ($chooseDateFormatValue === '0'); // true als '0' (= YYYY), false als '1' (= dd MMM YYYY)
+
 
         if (empty($selected)) {
             // Geen selectie: toon een foutmelding (danger)
@@ -58,7 +61,7 @@ class AdminFormHandler
         } else {
             // Toon welke stambomen geselecteerd zijn en genereer het bestand
             $this->notifySelectedTrees($selected);
-            $this->generateGendex($selected, $addAllNames, $diacritical);
+            $this->generateGendex($selected, $addAllNames, $diacritical, $chooseDateFormat);
             $this->addFlash('The GENDEX file has been generated successfully.', 'success');
         }
 
@@ -121,10 +124,10 @@ class AdminFormHandler
      * Wrapper die de bestaande MakeGendex aanroept om het bestand te genereren.
      * - hier kun je later error handling of logging toevoegen
      */
-    private function generateGendex(array $selected, bool $addAllNames, bool $diacritical): void
+    private function generateGendex(array $selected, bool $addAllNames, bool $diacritical, bool $chooseDateFormat): void
     {
         $generator = new MakeGendex();
-        $generator->generateGendexFile($selected, $addAllNames, $diacritical);
+        $generator->generateGendexFile($selected, $addAllNames, $diacritical, $chooseDateFormat);
     }
 
     /**

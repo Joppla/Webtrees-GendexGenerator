@@ -97,9 +97,9 @@ use Joppla\Modules\GendexGenerator\AdminAction;
           </div>
           <div class="col-sm-9">
             <?= view('components/radios', [
-              'name'     => 'dateFormat',
+              'name'     => 'chooseDateFormat',
               'options'  => [ I18N::translate('YYYY') , I18N::translate('dd MMM YYYY') ],
-              'selected' => 0, // component verwacht index 0/1
+              'selected' => $selected_chooseDateFormat , // component verwacht index 0/1
               'attrs'    => ['class' => 'me-3'] // optioneel
             ]) ?>
 
@@ -111,7 +111,7 @@ use Joppla\Modules\GendexGenerator\AdminAction;
           </div>
         </div>
 
-        <div class="row mb-3">
+<!--         <div class="row mb-3">
           <div class="col-sm-3">
             <?= I18N::translate('Show Birthplace, Deathplace or both') ?>
           </div>
@@ -134,7 +134,7 @@ use Joppla\Modules\GendexGenerator\AdminAction;
               ) ?>
             </div>
           </div>
-        </div>
+        </div> -->
 
                 
         <p class="alert alert-info">

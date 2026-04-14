@@ -143,6 +143,7 @@ class GendexGeneratorModule extends AbstractModule implements ModuleCustomInterf
         // Dit moet later uit de aanwezige settings komen
         $selectedAddAllNames = 0; // 0 = yes, 1 = no
         $selectedDiacritical  = 0; // 0 = yes, 1 = no
+        $selectedChooseDateFormat = 0; // 0 = YYYY, 1 = dd MMM YYYY
 
         // Render de admin-page view met data uit de DTO
         return $this->viewResponse($this->name() . '::admin-page', [
@@ -155,6 +156,7 @@ class GendexGeneratorModule extends AbstractModule implements ModuleCustomInterf
             'WT_BASE_URL' => $dto->baseUrl,
             'selected_add_all_names' => $selectedAddAllNames,
             'selected_diacritical'  => $selectedDiacritical,
+            'selected_chooseDateFormat' => $selectedChooseDateFormat,
         ]);
     }
 

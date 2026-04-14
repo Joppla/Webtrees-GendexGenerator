@@ -10,6 +10,7 @@ use Fisharebest\Webtrees\Auth;
 use Fisharebest\Webtrees\Individual;
 use Fisharebest\Webtrees\Tree;
 use Exception;
+// use Symfony\Polyfill\Intl\Normalizer;
 
 class MakeGendex
 {
@@ -22,19 +23,22 @@ class MakeGendex
     private int $batchSize = 500;
     private bool $addAllNames = false;
     private bool $diacritical = false;
+    private bool $chooseDateFormat = false;
 
     public function __construct(
         ?TreeService $treeService = null, 
         ?string $outputDir = null, 
         int $batchSize = 500,
         bool $addAllNames = false,
-        bool $diacritical = false
+        bool $diacritical = false,
+        bool $chooseDateFormat = false
     ) {
         $this->treeService = $treeService ?? Registry::container()->get(TreeService::class);
         $this->outputDir = rtrim($outputDir ?? Webtrees::ROOT_DIR, DIRECTORY_SEPARATOR) . DIRECTORY_SEPARATOR;
         $this->batchSize = max(1, $batchSize);
         $this->addAllNames = $addAllNames;
         $this->diacritical = $diacritical;
+        $this->chooseDateFormat = $chooseDateFormat;
     }
 
     private function log(string $message, string $fileName = 'gendex_log.txt'): void
@@ -60,7 +64,23 @@ class MakeGendex
         return str_replace(["\r", "\n", "|"], ' ', $value);
     }
 
-
+    /**
+     * Controleert of een string diacritische tekens bevat
+     */
+    private function hasDiacriticalMarks(string $text): bool
+    {
+        // Vergelijk originele tekst met versie zonder diacriticals
+        return $text !== $this->removeDiacriticalMarks($text);
+    }
+    
+    /**
+     * Verwijdert diacritische tekens van een string
+     */
+    private function removeDiacriticalMarks(string $text): string
+    {
+        // Gebruik iconv combining marks te verwijderen
+        return iconv("UTF-8", "ASCII//TRANSLIT", $text);
+    }
 
 
     /**
@@ -70,9 +90,12 @@ class MakeGendex
      */
     private function getDateFromFacts(array $facts, string $xref, Tree $tree): string
     {
+        // Bepaal welke velden we selecteren
+        $select = $this->chooseDateFormat ? ['d_year'] : ['d_year', 'd_month', 'd_day'];
+        
         foreach ($facts as $fact) {
             $row = DB::table('dates')
-                ->select(['d_year', 'd_month', 'd_day'])
+                ->select($select)
                 ->where('d_fact', '=', $fact)
                 ->where('d_gid', '=', $xref)
                 ->where('d_file', '=', $tree->id())
@@ -120,51 +143,119 @@ class MakeGendex
     }
 
 
-    private function formatLineFromNameRow(Tree $tree, object $nameRow, Individual $individual): string
+    private function formatLineFromNameRow(
+        Tree $tree, 
+        object $nameRow, 
+        Individual $individual
+    ): array
     {
         $xref = (string)$nameRow->n_id;
-
-        $reference = $tree->name() . '/individual/' . $xref;
-        
-        if ($this->addAllNames) {
-            $reference .= '?' . str_pad((string)$nameRow->n_num, 2, '0', STR_PAD_LEFT);
-        }
-
-        $given = isset($nameRow->n_givn) ? trim(strip_tags((string)$nameRow->n_givn)) : '';
-        $surname = isset($nameRow->n_surname) ? strtoupper(trim(strip_tags((string)$nameRow->n_surname))) : '';
+        $given = isset($nameRow->n_givn) ? 
+            trim(strip_tags((string)$nameRow->n_givn)) : '';
+        $surname = isset($nameRow->n_surname) ? 
+            mb_strtoupper(trim(strip_tags((string)$nameRow->n_surname)), 'UTF-8') : '';
         $fullName = trim($given . ' /' . $surname . '/');
+        
         if ($fullName === '') {
             $fullName = trim(strip_tags($individual->getFullName() ?: ''));
         }
-
+    
         // Geboortedatum: BIRT, BAPM, CHR (in volgorde)
         $birthDate = $this->getDateFromFacts(['BIRT', 'BAPM', 'CHR'], $xref, $tree);
-
-        // Geboorteplaats: gebruik individual's getBirthPlace() indien beschikbaar; fallback leeg
-        $birthPlace = trim(strip_tags($this->getPlaceString($individual->getBirthPlace())));
-
-
+    
+        // Geboorteplaats
+        $birthPlace = 
+            trim(strip_tags($this->getPlaceString($individual->getBirthPlace())));
+    
         // Overlijdensdatum: DEAT, BURI
         $deathDate = $this->getDateFromFacts(['DEAT', 'BURI'], $xref, $tree);
-
-        $deathPlace = trim(strip_tags($this->getPlaceString($individual->getDeathPlace())));
-
-
-        $columns = [
-            $reference,
-            $surname,
-            $fullName,
-            $birthDate,
-            $birthPlace,
-            $deathDate,
-            $deathPlace,
-        ];
-
-        $columns = array_map(fn($c) => $this->sanitizeFieldForOutput((string)$c), $columns);
-
-
-        return implode('|', $columns) . '|';
+    
+        // Overlijdensplaats
+        $deathPlace = 
+            trim(strip_tags($this->getPlaceString($individual->getDeathPlace())));
+    
+        // Build base reference
+        $baseReference = $tree->name() . '/individual/' . $xref;
+        
+        // Bereken het volgnummer voor de reference
+        if ($this->addAllNames || $this->diacritical) {
+            $sequenceNum = '00';
+            $sequenceNum = str_pad((string)$nameRow->n_num, 2, '0', STR_PAD_LEFT);
+        }
+    
+        // Array voor de terug te geven regels
+        $lines = [];
+    
+        // Controleer op diacriticals
+        $hasDiacriticals = false;
+        if($this->diacritical) {
+            $hasDiacriticals = $this->hasDiacriticalMarks($fullName . $surname);
+        }
+    
+        if ($this->diacritical && $hasDiacriticals) {
+            // JA: converteer diacriticals
+            // Regel 1: Originele naam met diacriticals
+            $reference1 = $baseReference . '?' . $sequenceNum . '00';
+            $columns1 = [
+                $reference1,
+                $surname,
+                $fullName,
+                $birthDate,
+                $birthPlace,
+                $deathDate,
+                $deathPlace,
+            ];
+            $columns1 = array_map(
+                fn($c) => $this->sanitizeFieldForOutput((string)$c), 
+                $columns1
+            );
+            $lines[] = implode('|', $columns1) . '|';
+    
+            // Regel 2: Geconverteerde naam zonder diacriticals
+            $reference2 = $baseReference . '?' . $sequenceNum . '01';
+            $fullNameConverted = $this->removeDiacriticalMarks($fullName);
+            $surnameConverted = $this->removeDiacriticalMarks($surname);
+            $columns2 = [
+                $reference2,
+                $surnameConverted,
+                $fullNameConverted,
+                $birthDate,
+                $birthPlace,
+                $deathDate,
+                $deathPlace,
+            ];
+            $columns2 = array_map(
+                fn($c) => $this->sanitizeFieldForOutput((string)$c), 
+                $columns2
+            );
+            $lines[] = implode('|', $columns2) . '|';
+        } else {
+            // NEE: geen conversie nodig, standaard regel
+            $reference = $baseReference;
+            
+            if ($this->addAllNames || $this->diacritical) {
+                $reference .= '?' . $sequenceNum . '00';
+            }
+            
+            $columns = [
+                $reference,
+                $surname,
+                $fullName,
+                $birthDate,
+                $birthPlace,
+                $deathDate,
+                $deathPlace,
+            ];
+            $columns = array_map(
+                fn($c) => $this->sanitizeFieldForOutput((string)$c), 
+                $columns
+            );
+            $lines[] = implode('|', $columns) . '|';
+        }
+    
+        return $lines;
     }
+
 
     private function iterateNames(Tree $tree, callable $callback): void
     {
@@ -201,11 +292,12 @@ class MakeGendex
         }
     }
 
-    public function generateGendexFile(array $selectedTrees, bool $addAllNames = false, bool $diacritical = false): void
+    public function generateGendexFile(array $selectedTrees, bool $addAllNames = false, bool $diacritical = false, $chooseDateFormat = false): void
     {
         // Stel de opties in als ze zijn doorgegeven
         $this->addAllNames = $addAllNames;
         $this->diacritical = $diacritical;
+        $this->chooseDateFormat = $chooseDateFormat;
         
         $tmpPath = $this->outputDir . $this->gendexFilename . $this->tmpSuffix;
         $finalPath = $this->outputDir . $this->gendexFilename;
@@ -239,32 +331,39 @@ class MakeGendex
                     $this->log("Boom met id {$treeId} niet gevonden, overslaan.");
                     continue;
                 }
-
+                    
+                // Probeer Individual-object te maken; voorkomt M/N/andere records
                 $this->iterateNames($tree, function($nameRow) use ($tree, $handleMain, $handleFiltered) {
                     $nId = (string)$nameRow->n_id;
                     
-                    // Probeer Individual-object te maken; voorkomt M/N/andere records
                     $individual = Registry::individualFactory()->make($nId, $tree);
-                    if (! $individual) {
-                        $givn = isset($nameRow->n_givn) ? $this->sanitizeFieldForOutput((string)$nameRow->n_givn) : '';
-                        $surn = isset($nameRow->n_surname) ? $this->sanitizeFieldForOutput((string)$nameRow->n_surname) : '';
+                    if (!$individual) {
+                        $givn = isset($nameRow->n_givn) ? 
+                            $this->sanitizeFieldForOutput((string)$nameRow->n_givn) : '';
+                        $surn = isset($nameRow->n_surname) ? 
+                            $this->sanitizeFieldForOutput((string)$nameRow->n_surname) : '';
                         $reason = 'no_individual';
                         $filteredLine = implode('|', [$tree->name(), $nId, $givn, $surn, $reason]);
                         fwrite($handleFiltered, $filteredLine . PHP_EOL);
                         return;
                     }
-
-                    if (! $this->canShowNameForIndividual($individual)) {
-                        $givn = isset($nameRow->n_givn) ? $this->sanitizeFieldForOutput((string)$nameRow->n_givn) : '';
-                        $surn = isset($nameRow->n_surname) ? $this->sanitizeFieldForOutput((string)$nameRow->n_surname) : '';
+                
+                    if (!$this->canShowNameForIndividual($individual)) {
+                        $givn = isset($nameRow->n_givn) ? 
+                            $this->sanitizeFieldForOutput((string)$nameRow->n_givn) : '';
+                        $surn = isset($nameRow->n_surname) ? 
+                            $this->sanitizeFieldForOutput((string)$nameRow->n_surname) : '';
                         $reason = 'privacy_filtered';
                         $filteredLine = implode('|', [$tree->name(), $nId, $givn, $surn, $reason]);
                         fwrite($handleFiltered, $filteredLine . PHP_EOL);
                         return;
                     }
-
-                    $line = $this->formatLineFromNameRow($tree, $nameRow, $individual);
-                    fwrite($handleMain, $line . PHP_EOL);
+                
+                    // formatLineFromNameRow retourneert nu een ARRAY van regels
+                    $lines = $this->formatLineFromNameRow($tree, $nameRow, $individual);
+                    foreach ($lines as $line) {
+                        fwrite($handleMain, $line . PHP_EOL);
+                    }
                 });
             }
 
@@ -303,6 +402,7 @@ class MakeGendex
             }
 
             $this->log("GENDEX en filtered bestanden succesvol gegenereerd.");
+ 
         } catch (Exception $e) {
             if (isset($handleMain) && is_resource($handleMain)) {
                 fclose($handleMain);
