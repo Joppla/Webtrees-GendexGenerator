@@ -4,5 +4,5 @@
 A Webtrees module to generate `gendex.txt` files for family trees.
 
 ## Moved to Codeberg
-I have moved this project to [https://codeberg.org/Joppla/Webtrees-GendexGenerator](Codeberg). There you will find the latest version.
+I have moved this project to [Codeberg](https://codeberg.org/Joppla/Webtrees-GendexGenerator). There you will find the latest version.
 [https://codeberg.org/Joppla/Webtrees-GendexGenerator](https://codeberg.org/Joppla/Webtrees-GendexGenerator)
