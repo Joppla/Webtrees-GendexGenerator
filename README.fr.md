@@ -44,4 +44,5 @@ Voir le fichier [LICENCE](LICENSE) pour plus de détails.
 - [Allemand](README.de.md)
 - [Français](README.fr.md)
 - [Polonais](README.pl.md)
+
 Vous voulez aider avec les traductions ? Ouvrez une pull request !
