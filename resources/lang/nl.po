@@ -2,55 +2,256 @@ msgid ""
 msgstr ""
 "Project-Id-Version: gendexgenerator\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-03-31 00:00+0000\n"
-"PO-Revision-Date: 2026-03-31 00:00+0000\n"
+"POT-Creation-Date: 2026-04-15 00:00+0000\n"
+"PO-Revision-Date: 2026-04-15 22:13+0200\n"
 "Last-Translator: \n"
-"Language-Team: Dutch\n"
+"Language-Team: \n"
 "Language: nl\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
+"X-Generator: Poedit 3.9\n"
 
-#: module.php:30
+#: module.php:72
 msgid "Gendex Generator"
 msgstr "Gendex Generator"
 
-#: module.php:34
+#: module.php:82
 msgid "Generates a gendex.txt file for your family tree."
 msgstr "Genereert een gendex.txt-bestand voor je stamboom."
 
-#: module.php:64
-msgid "Update GENDEX text file"
-msgstr "GENDEX-tekstbestand bijwerken"
-
-#: module.php:66
-msgid "Create GENDEX text file"
-msgstr "GENEX-tekstbestand aanmaken"
-
-#: module.php:77
-msgid "The preferences for the module “%s” have been updated."
-msgstr "De voorkeuren voor de module “%s” zijn bijgewerkt."
-
-#: resources/views/admin-page.php:3
-msgid "Control panel"
-msgstr "Controle paneel"
-
-#: resources/views/admin-page.php:8
+#: resources/views/admin-page.phtml:16
 msgid "Welcome to the configuration page of the Gendex Generator module."
-msgstr "Welkom bij de configuratiepagina van de Gendex Generator-module."
+msgstr "Welkom op de configuratiepagina van de Gendex Generator-module."
 
-#: resources/views/admin-page.php:9
-msgid "A GENDEX file is an index of personal data and a short page URL. It is used to index a genealogical website by a genealogical search engine. The idea behind it is to join numerous pedigrees of individual genealogical researchers to a central database, while the individual genealogical researchers are still keeping  all control over their data. Unlike a GEDCOM file a GENDEX file contains no information about the family relationships between individuals. This means the file is useless without the corresponding website."
-msgstr "Een GENDEX-bestand is een index van persoonsgegevens en een korte paginaplink. Het wordt gebruikt om een genealogische website te indexeren door een genealogische zoekmachine. Het idee is om talrijke stambomen van individuele onderzoekers te koppelen aan een centrale database, terwijl de individuele onderzoekers alle controle over hun gegevens behouden. In tegenstelling tot een GEDCOM-bestand bevat een GENDEX-bestand geen informatie over familiebanden tussen personen. Dit betekent dat het bestand nutteloos is zonder de bijbehorende website."
+#: resources/views/admin-page.phtml:20
+msgid ""
+"A GENDEX file is an index of personal data and a short page URL. It is used "
+"to index a genealogical website by a genealogical search engine. The idea "
+"behind it is to join numerous pedigrees of individual genealogical "
+"researchers to a central database, while the individual genealogical "
+"researchers are still keeping all control over their data. Unlike a GEDCOM "
+"file a GENDEX file contains no information about the family relationships "
+"between individuals. This means the file is useless without the "
+"corresponding website."
+msgstr ""
+"Een GENDEX-bestand is een index van persoonsgegevens en een korte pagina-"
+"URL. Het wordt gebruikt om een genealogische website te indexeren via een "
+"genealogische zoekmachine. Het idee hierachter is om talrijke stambomen van "
+"individuele genealogische onderzoekers te koppelen aan een centrale "
+"database, terwijl de individuele onderzoekers volledige controle over hun "
+"gegevens behouden. In tegenstelling tot een GEDCOM-bestand bevat een GENDEX-"
+"bestand geen informatie over familierelaties tussen individuen. Dit betekent "
+"dat het bestand zonder de bijbehorende website nutteloos is."
 
-#: resources/views/admin-page.php:10
+#: resources/views/admin-page.phtml:22
 msgid "The GENDEX file will only contain public data."
-msgstr "Het GENDEX-bestand bevat alleen openbare gegevens."
+msgstr "Het GENDEX-bestand zal alleen openbare gegevens bevatten."
 
-#: resources/views/admin-page.php:12
-msgid "Which family trees should be included in the GENDEX file?"
-msgstr "Welke stambomen moeten in het GENDEX-bestand worden opgenomen?"
+#: resources/views/admin-page.phtml:30
+msgid "Which trees and names should be included in the GENDEX file?"
+msgstr ""
+"Welke stambomen en namen moeten worden opgenomen in het GENDEX-bestand?"
 
-#: resources/views/admin-page.php:24
-msgid "Back to control panel"
-msgstr "Terug naar het configuratiescherm"
+#: resources/views/admin-page.phtml:36
+msgid "Trees"
+msgstr "Stambomen"
+
+#: resources/views/admin-page.phtml:50
+msgid "Select the Trees to be added to the GENDEX file"
+msgstr ""
+"Selecteer de stambomen die moeten worden toegevoegd aan het GENDEX-bestand"
+
+#: resources/views/admin-page.phtml:57
+msgid "Add all names?"
+msgstr "Alle namen toevoegen?"
+
+#: resources/views/admin-page.phtml:68
+msgid ""
+"If you choose \"no\", only an individual's primary name will be added to the "
+"GENDEX file. If you choose \"yes\", all of an individual's names will be "
+"added to the GENDEX file."
+msgstr ""
+"Als u \"nee\" kiest, wordt alleen de primaire naam van een individu "
+"toegevoegd aan het GENDEX-bestand. Als u \"ja\" kiest, worden alle namen van "
+"een individu toegevoegd aan het GENDEX-bestand."
+
+#: resources/views/admin-page.phtml:76
+msgid "Convert diacritical marks?"
+msgstr "Diacritische tekens omzetten?"
+
+#: resources/views/admin-page.phtml:88
+msgid ""
+"If you choose \"no\", the name or names will be left unchanged. If you "
+"choose \"yes\", all the diacritical marks (f.e. à, é, è, ê, ß, æ, œ, ą, ł) "
+"in the names will be converted to their base letters without diacritics (a, "
+"e, e, e, ss, ae, oe, a, l). There will be added an extra line in the GENDEX "
+"file with the converted name."
+msgstr ""
+"Als u \"nee\" kiest, blijven de namen ongewijzigd. Als u \"ja\" kiest, "
+"worden alle diacritische tekens (bijv. à, é, è, ê, ß, æ, œ, ą, ł) in de "
+"namen omgezet naar hun basisletters zonder diacritische tekens (a, e, e, e, "
+"ss, ae, oe, a, l). Er wordt een extra regel toegevoegd aan het GENDEX-"
+"bestand met de omgezette naam."
+
+#: resources/views/admin-page.phtml:96
+msgid "Add the dates in \"YYYY\" or \"dd MMM YYYY\" format?"
+msgstr "De data toevoegen in \"YYYY\" of \"dd MMM YYYY\" formaat?"
+
+#: resources/views/admin-page.phtml:108
+msgid ""
+"Familytreeseeker shows only the YYYY format. Using the YYYY format allows "
+"you to share less about your research work to trigger interested people to "
+"visit your website."
+msgstr ""
+"Stamboomzoeker toont alleen het YYYY-formaat. Door het YYYY-formaat te "
+"gebruiken, deelt u minder informatie over uw onderzoek, wat geïnteresseerden "
+"kan aanzetten om uw website te bezoeken."
+
+#: resources/views/admin-page.phtml:116
+msgid "Show Birthplace, Deathplace or both"
+msgstr "Geboorteplaats, overlijdensplaats of beide tonen"
+
+#: resources/views/admin-page.phtml:122
+msgid "Don't show place names"
+msgstr "Geen plaatsnamen tonen"
+
+#: resources/views/admin-page.phtml:123
+msgid "Show only the birthplace"
+msgstr "Alleen de geboorteplaats tonen"
+
+#: resources/views/admin-page.phtml:124
+msgid "Show only the death place"
+msgstr "Alleen de overlijdensplaats tonen"
+
+#: resources/views/admin-page.phtml:125
+msgid "Show both"
+msgstr "Beide tonen"
+
+#: resources/views/admin-page.phtml:133
+msgid ""
+"This option allows you to share less about your research work to trigger "
+"interested people to visit your website."
+msgstr ""
+"Met deze optie kunt u minder informatie over uw onderzoek delen, wat "
+"geïnteresseerden kan aanzetten om uw website te bezoeken."
+
+#: resources/views/admin-page.phtml:143
+msgid ""
+"Note: if you choose to add all names or to convert the diacritics, there "
+"will be added a sequence number to the GENDEX link. The sequence number is "
+"formatted as \"?0001\" (f.e.: <code>https://mydomain.com/tree/myfamilytree/"
+"X496?0001</code>). In general this has no impact for the link, but if it "
+"gives a problem, please choose to \"no\" for both items."
+msgstr ""
+"Opmerking: als u kiest om alle namen toe te voegen of diacritische tekens om "
+"te zetten, wordt een volgnummer toegevoegd aan de GENDEX-link. Het "
+"volgnummer heeft het formaat \"?0001\" (bijv.: <code>https://mydomain.com/"
+"tree/myfamilytree/X496?0001</code>). Over het algemeen heeft dit geen "
+"invloed op de link, maar als het problemen geeft, kiest u dan voor \"nee\" "
+"bij beide opties."
+
+#: resources/views/admin-page.phtml:147
+msgid "Replace GENDEX text file"
+msgstr "GENDEX-tekstbestand vervangen"
+
+#: resources/views/admin-page.phtml:148
+msgid "Create GENDEX text file"
+msgstr "GENDEX-tekstbestand aanmaken"
+
+#: resources/views/admin-page.phtml:151
+msgid "Back to "
+msgstr "Terug naar "
+
+#: resources/views/admin-page.phtml:161
+msgid "We found a GENDEX file"
+msgstr "Er is een GENDEX-bestand gevonden"
+
+#: resources/views/admin-page.phtml:163
+msgid ""
+"Click on this link to view your GENDEX file or to copy the link to add it to "
+"the GENDEX search engine:"
+msgstr ""
+"Klik op deze link om uw GENDEX-bestand te bekijken of de link te kopiëren om "
+"toe te voegen aan de GENDEX-zoekmachine:"
+
+#: resources/views/admin-page.phtml:169
+msgid "Click on this link to download your GENDEX file:"
+msgstr "Klik op deze link om uw GENDEX-bestand te downloaden:"
+
+#: resources/views/admin-page.phtml:174
+msgid ""
+"Note: It is possible that your gendex.txt is cached in the browser. You will "
+"see the same as the previous version."
+msgstr ""
+"Opmerking: Het is mogelijk dat uw gendex.txt in de cache van de browser "
+"staat. U ziet dan dezelfde versie als voorheen."
+
+#: resources/views/admin-page.phtml:179
+msgid ""
+"You can copy the link to a private browser window or close the browser "
+"completely and re-open."
+msgstr ""
+"U kunt de link kopiëren naar een privé-browservenster of de browser volledig "
+"sluiten en opnieuw openen."
+
+#: resources/views/admin-page.phtml:186
+msgid ""
+"To tell search engines that a GENDEX file is available, you should submit "
+"the url above to the genealogical search engine of your choice."
+msgstr ""
+"Om zoekmachines te laten weten dat er een GENDEX-bestand beschikbaar is, "
+"moet u de bovenstaande URL indienen bij de genealogische zoekmachine van uw "
+"keuze."
+
+#: resources/views/admin-page.phtml:189
+msgid ""
+"The search engines below are known to accept the GENDEX textfile created by "
+"this module:"
+msgstr ""
+"De onderstaande zoekmachines accepteren het GENDEX-tekstbestand dat door "
+"deze module is gegenereerd:"
+
+#: resources/views/admin-page.phtml:190
+msgid "English/International"
+msgstr "Engels/Internationaal"
+
+#: resources/views/admin-page.phtml:193
+msgid "Dutch"
+msgstr "Nederlands"
+
+#: resources/views/admin-page.phtml:200
+msgid ""
+"You need this url as general url to the individual pages when submitting to "
+"Stamboomzoeker or Familytreeseeker:"
+msgstr ""
+"U heeft deze URL nodig als algemene URL naar de individuele pagina's bij het "
+"indienen bij Stamboomzoeker of Familytreeseeker:"
+
+#: resources/views/admin-page.phtml:211
+msgid "Click on text to select it at once."
+msgstr "Klik op de tekst om deze in één keer te selecteren."
+
+#: resources/views/admin-page.phtml:214
+msgid ""
+"Note: the GENDEX text file is not automatically updated. If you have made "
+"changes to your tree you need to update the GENDEX text file manually by "
+"clicking on the button. You do <b>not</b> need to update your subscription "
+"at the genealogical search engine."
+msgstr ""
+"Opmerking: het GENDEX-tekstbestand wordt niet automatisch bijgewerkt. Als u "
+"wijzigingen heeft aangebracht in uw stamboom, moet u het GENDEX-tekstbestand "
+"handmatig bijwerken door op de knop te klikken. U hoeft uw abonnement bij de "
+"genealogische zoekmachine <b>niet</b> bij te werken."
+
+#: src/AdminFormHandler.php:60
+msgid "No family trees selected."
+msgstr "Geen stambomen geselecteerd."
+
+#: src/AdminFormHandler.php:65
+msgid "The GENDEX file has been generated successfully."
+msgstr "Het GENDEX-bestand is succesvol gegenereerd."
+
+#: src/AdminFormHandler.php:115
+msgid "The following family trees have been selected: %s"
+msgstr "De volgende stambomen zijn geselecteerd: %s"

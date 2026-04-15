@@ -1,169 +1,168 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: gendexgenerator\n"
+"Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2026-04-15 00:00+0000\n"
-"PO-Revision-Date: 2026-04-15 22:11+0200\n"
+"PO-Revision-Date: 2026-04-15 00:00+0000\n"
 "Last-Translator: \n"
 "Language-Team: \n"
-"Language: en\n"
+"Language: \n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Generator: Poedit 3.9\n"
-"X-Poedit-SourceCharset: UTF-8\n"
 
 #: module.php:72
 msgid "Gendex Generator"
-msgstr "Gendex Generator"
+msgstr ""
 
 #: module.php:82
 msgid "Generates a gendex.txt file for your family tree."
-msgstr "Generates a gendex.txt file for your family tree."
+msgstr ""
 
 #: resources/views/admin-page.phtml:16
 msgid "Welcome to the configuration page of the Gendex Generator module."
-msgstr "Welcome to the configuration page of the Gendex Generator module."
+msgstr ""
 
 #: resources/views/admin-page.phtml:20
 msgid "A GENDEX file is an index of personal data and a short page URL. It is used to index a genealogical website by a genealogical search engine. The idea behind it is to join numerous pedigrees of individual genealogical researchers to a central database, while the individual genealogical researchers are still keeping all control over their data. Unlike a GEDCOM file a GENDEX file contains no information about the family relationships between individuals. This means the file is useless without the corresponding website."
-msgstr "A GENDEX file is an index of personal data and a short page URL. It is used to index a genealogical website by a genealogical search engine. The idea behind it is to join numerous pedigrees of individual genealogical researchers to a central database, while the individual genealogical researchers are still keeping all control over their data. Unlike a GEDCOM file, a GENDEX file contains no information about the family relationships between individuals. This means the file is useless without the corresponding website."
+msgstr ""
 
 #: resources/views/admin-page.phtml:22
 msgid "The GENDEX file will only contain public data."
-msgstr "The GENDEX file will only contain public data."
+msgstr ""
 
 #: resources/views/admin-page.phtml:30
 msgid "Which trees and names should be included in the GENDEX file?"
-msgstr "Which trees and names should be included in the GENDEX file?"
+msgstr ""
 
 #: resources/views/admin-page.phtml:36
 msgid "Trees"
-msgstr "Trees"
+msgstr ""
 
 #: resources/views/admin-page.phtml:50
 msgid "Select the Trees to be added to the GENDEX file"
-msgstr "Select the Trees to be added to the GENDEX file"
+msgstr ""
 
 #: resources/views/admin-page.phtml:57
 msgid "Add all names?"
-msgstr "Add all names?"
+msgstr ""
 
 #: resources/views/admin-page.phtml:68
 msgid "If you choose \"no\", only an individual's primary name will be added to the GENDEX file. If you choose \"yes\", all of an individual's names will be added to the GENDEX file."
-msgstr "If you choose \"no\", only an individual's primary name will be added to the GENDEX file. If you choose \"yes\", all of an individual's names will be added to the GENDEX file."
+msgstr ""
 
 #: resources/views/admin-page.phtml:76
 msgid "Convert diacritical marks?"
-msgstr "Convert diacritical marks?"
+msgstr ""
 
 #: resources/views/admin-page.phtml:88
 msgid "If you choose \"no\", the name or names will be left unchanged. If you choose \"yes\", all the diacritical marks (f.e. à, é, è, ê, ß, æ, œ, ą, ł) in the names will be converted to their base letters without diacritics (a, e, e, e, ss, ae, oe, a, l). There will be added an extra line in the GENDEX file with the converted name."
-msgstr "If you choose \"no\", the name or names will be left unchanged. If you choose \"yes\", all the diacritical marks (f.e. à, é, è, ê, ß, æ, œ, ą, ł) in the names will be converted to their base letters without diacritics (a, e, e, e, ss, ae, oe, a, l). There will be added an extra line in the GENDEX file with the converted name."
+msgstr ""
 
 #: resources/views/admin-page.phtml:96
 msgid "Add the dates in \"YYYY\" or \"dd MMM YYYY\" format?"
-msgstr "Add the dates in \"YYYY\" or \"dd MMM YYYY\" format?"
+msgstr ""
 
 #: resources/views/admin-page.phtml:108
 msgid "Familytreeseeker shows only the YYYY format. Using the YYYY format allows you to share less about your research work to trigger interested people to visit your website."
-msgstr "Familytreeseeker shows only the YYYY format. Using the YYYY format allows you to share less about your research work to trigger interested people to visit your website."
+msgstr ""
 
 #: resources/views/admin-page.phtml:116
 msgid "Show Birthplace, Deathplace or both"
-msgstr "Show Birthplace, Deathplace or both"
+msgstr ""
 
 #: resources/views/admin-page.phtml:122
 msgid "Don't show place names"
-msgstr "Don't show place names"
+msgstr ""
 
 #: resources/views/admin-page.phtml:123
 msgid "Show only the birthplace"
-msgstr "Show only the birthplace"
+msgstr ""
 
 #: resources/views/admin-page.phtml:124
 msgid "Show only the death place"
-msgstr "Show only the death place"
+msgstr ""
 
 #: resources/views/admin-page.phtml:125
 msgid "Show both"
-msgstr "Show both"
+msgstr ""
 
 #: resources/views/admin-page.phtml:133
 msgid "This option allows you to share less about your research work to trigger interested people to visit your website."
-msgstr "This option allows you to share less about your research work to trigger interested people to visit your website."
+msgstr ""
 
 #: resources/views/admin-page.phtml:143
 msgid "Note: if you choose to add all names or to convert the diacritics, there will be added a sequence number to the GENDEX link. The sequence number is formatted as \"?0001\" (f.e.: <code>https://mydomain.com/tree/myfamilytree/X496?0001</code>). In general this has no impact for the link, but if it gives a problem, please choose to \"no\" for both items."
-msgstr "Note: if you choose to add all names or to convert the diacritics, there will be added a sequence number to the GENDEX link. The sequence number is formatted as \"?0001\" (e.g.: <code>https://mydomain.com/tree/myfamilytree/X496?0001</code>). In general this has no impact for the link, but if it causes a problem, please choose \"no\" for both items."
+msgstr ""
 
 #: resources/views/admin-page.phtml:147
 msgid "Replace GENDEX text file"
-msgstr "Replace GENDEX text file"
+msgstr ""
 
 #: resources/views/admin-page.phtml:148
 msgid "Create GENDEX text file"
-msgstr "Create GENDEX text file"
+msgstr ""
 
 #: resources/views/admin-page.phtml:151
 msgid "Back to "
-msgstr "Back to "
+msgstr ""
 
 #: resources/views/admin-page.phtml:161
 msgid "We found a GENDEX file"
-msgstr "We found a GENDEX file"
+msgstr ""
 
 #: resources/views/admin-page.phtml:163
 msgid "Click on this link to view your GENDEX file or to copy the link to add it to the GENDEX search engine:"
-msgstr "Click on this link to view your GENDEX file or to copy the link to add it to the GENDEX search engine:"
+msgstr ""
 
 #: resources/views/admin-page.phtml:169
 msgid "Click on this link to download your GENDEX file:"
-msgstr "Click on this link to download your GENDEX file:"
+msgstr ""
 
 #: resources/views/admin-page.phtml:174
 msgid "Note: It is possible that your gendex.txt is cached in the browser. You will see the same as the previous version."
-msgstr "Note: It is possible that your gendex.txt is cached in the browser. You will see the same as the previous version."
+msgstr ""
 
 #: resources/views/admin-page.phtml:179
 msgid "You can copy the link to a private browser window or close the browser completely and re-open."
-msgstr "You can copy the link to a private browser window or close the browser completely and re-open."
+msgstr ""
 
 #: resources/views/admin-page.phtml:186
 msgid "To tell search engines that a GENDEX file is available, you should submit the url above to the genealogical search engine of your choice."
-msgstr "To tell search engines that a GENDEX file is available, you should submit the URL above to the genealogical search engine of your choice."
+msgstr ""
 
 #: resources/views/admin-page.phtml:189
 msgid "The search engines below are known to accept the GENDEX textfile created by this module:"
-msgstr "The search engines below are known to accept the GENDEX text file created by this module:"
+msgstr ""
 
 #: resources/views/admin-page.phtml:190
 msgid "English/International"
-msgstr "English/International"
+msgstr ""
 
 #: resources/views/admin-page.phtml:193
 msgid "Dutch"
-msgstr "Dutch"
+msgstr ""
 
 #: resources/views/admin-page.phtml:200
 msgid "You need this url as general url to the individual pages when submitting to Stamboomzoeker or Familytreeseeker:"
-msgstr "You need this URL as general URL to the individual pages when submitting to Stamboomzoeker or Familytreeseeker:"
+msgstr ""
 
 #: resources/views/admin-page.phtml:211
 msgid "Click on text to select it at once."
-msgstr "Click on text to select it at once."
+msgstr ""
 
 #: resources/views/admin-page.phtml:214
 msgid "Note: the GENDEX text file is not automatically updated. If you have made changes to your tree you need to update the GENDEX text file manually by clicking on the button. You do <b>not</b> need to update your subscription at the genealogical search engine."
-msgstr "Note: the GENDEX text file is not automatically updated. If you have made changes to your tree, you need to update the GENDEX text file manually by clicking on the button. You do <b>not</b> need to update your subscription at the genealogical search engine."
+msgstr ""
 
 #: src/AdminFormHandler.php:60
 msgid "No family trees selected."
-msgstr "No family trees selected."
+msgstr ""
 
 #: src/AdminFormHandler.php:65
 msgid "The GENDEX file has been generated successfully."
-msgstr "The GENDEX file has been generated successfully."
+msgstr ""
 
 #: src/AdminFormHandler.php:115
 msgid "The following family trees have been selected: %s"
-msgstr "The following family trees have been selected: %s"
+msgstr ""

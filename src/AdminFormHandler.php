@@ -53,6 +53,13 @@ class AdminFormHandler
 
         $chooseDateFormatValue = $request->getParsedBody()['chooseDateFormat'] ?? '1';
         $chooseDateFormat = ($chooseDateFormatValue === '0'); // true als '0' (= YYYY), false als '1' (= dd MMM YYYY)
+        
+        // Haal de radio button waarde 'showPlaces' op (0, 1, 2 of 3)
+        $showPlacesValue = (int)($request->getParsedBody()['showPlaces'] ?? 3);
+        // Valideer dat het een geldige index is
+        if (!in_array($showPlacesValue, [0, 1, 2, 3], true)) {
+            $showPlacesValue = 3; // fallback naar default
+        }        
 
 
         if (empty($selected)) {
@@ -61,7 +68,7 @@ class AdminFormHandler
         } else {
             // Toon welke stambomen geselecteerd zijn en genereer het bestand
             $this->notifySelectedTrees($selected);
-            $this->generateGendex($selected, $addAllNames, $diacritical, $chooseDateFormat);
+            $this->generateGendex($selected, $addAllNames, $diacritical, $chooseDateFormat, $showPlacesValue);
             $this->addFlash('The GENDEX file has been generated successfully.', 'success');
         }
 
@@ -124,10 +131,16 @@ class AdminFormHandler
      * Wrapper die de bestaande MakeGendex aanroept om het bestand te genereren.
      * - hier kun je later error handling of logging toevoegen
      */
-    private function generateGendex(array $selected, bool $addAllNames, bool $diacritical, bool $chooseDateFormat): void
+    private function generateGendex(
+        array $selected, 
+        bool $addAllNames, 
+        bool $diacritical, 
+        bool $chooseDateFormat,
+        int $showPlacesValue
+    ): void
     {
         $generator = new MakeGendex();
-        $generator->generateGendexFile($selected, $addAllNames, $diacritical, $chooseDateFormat);
+        $generator->generateGendexFile($selected, $addAllNames, $diacritical, $chooseDateFormat, $showPlacesValue);
     }
 
     /**

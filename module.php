@@ -14,7 +14,6 @@ use Fisharebest\Webtrees\Module\ModuleCustomInterface;
 use Fisharebest\Webtrees\Module\ModuleCustomTrait;
 use Fisharebest\Webtrees\I18N;
 use Fisharebest\Localization\Translation;
-// use Fisharebest\Webtrees\FlashMessages;
 use Fisharebest\Webtrees\View;
 use Fisharebest\Webtrees\Registry;
 use Fisharebest\Webtrees\Services\TreeService;
@@ -25,7 +24,7 @@ use Joppla\Modules\GendexGenerator\MakeGendex;
 use Joppla\Modules\GendexGenerator\AdminDataPage;
 use Joppla\Modules\GendexGenerator\AdminPageDto;
 use Joppla\Modules\GendexGenerator\AdminFormHandler;
-use Joppla\Modules\GendexGenerator\AdminPage;
+// use Joppla\Modules\GendexGenerator\AdminPage;
 use Joppla\Modules\GendexGenerator\AdminAction;
 
 /**
@@ -48,7 +47,7 @@ class GendexGeneratorModule extends AbstractModule implements ModuleCustomInterf
      *
      * - registreert PSR-4 autoloading voor classes in src/
      * - haalt TreeService uit de container
-     * - bouwt AdminPageData (data-provider) met optionele I18N uit container
+     * - bouwt AdminPageData (data-provider)
      */
     public function __construct()
     {
@@ -60,16 +59,10 @@ class GendexGeneratorModule extends AbstractModule implements ModuleCustomInterf
         // Haal services uit de dependency container
         $this->treeService = Registry::container()->get(TreeService::class);
 
-        // Probeer I18N uit container; fallback naar null als niet aanwezig
-/*        $i18n = Registry::container()->has(I18N::class)
-            ? Registry::container()->get(I18N::class)
-            : null;*/
-
         // AdminPageData houdt logic voor het opbouwen van de admin view data
         $this->adminPageData = new AdminPageData(
             $this->treeService,
             Webtrees::ROOT_DIR,
-            /*$i18n*/
         );
     }
 
@@ -102,7 +95,12 @@ class GendexGeneratorModule extends AbstractModule implements ModuleCustomInterf
      */
     public function customModuleVersion(): string
     {
-        return '1.0.2';
+        return '2.2.5.1';
+    }
+
+    public function customModuleLatestVersionUrl(): string 
+    { 
+        return 'https://codeberg.org/Joppla/Webtrees-GendexGenerator/raw/branch/main/latest-version.txt';
     }
 
     /**
@@ -110,7 +108,7 @@ class GendexGeneratorModule extends AbstractModule implements ModuleCustomInterf
      */
     public function customModuleSupportUrl(): string
     {
-        return 'https://github.com/Joppla/Webtrees-GendexGenerator';
+        return 'https://codeberg.org/Joppla/Webtrees-GendexGenerator';
     }
 
     /**

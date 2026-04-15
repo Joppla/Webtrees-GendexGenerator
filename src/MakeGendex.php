@@ -24,6 +24,7 @@ class MakeGendex
     private bool $addAllNames = false;
     private bool $diacritical = false;
     private bool $chooseDateFormat = false;
+    private int $showPlaces = 3; 
 
     public function __construct(
         ?TreeService $treeService = null, 
@@ -31,7 +32,8 @@ class MakeGendex
         int $batchSize = 500,
         bool $addAllNames = false,
         bool $diacritical = false,
-        bool $chooseDateFormat = false
+        bool $chooseDateFormat = false,
+        int $showPlaces = 3
     ) {
         $this->treeService = $treeService ?? Registry::container()->get(TreeService::class);
         $this->outputDir = rtrim($outputDir ?? Webtrees::ROOT_DIR, DIRECTORY_SEPARATOR) . DIRECTORY_SEPARATOR;
@@ -39,12 +41,13 @@ class MakeGendex
         $this->addAllNames = $addAllNames;
         $this->diacritical = $diacritical;
         $this->chooseDateFormat = $chooseDateFormat;
+        $this->showPlaces = max(0, min(3, $showPlaces));
     }
 
     private function log(string $message, string $fileName = 'gendex_log.txt'): void
     {
         $path = $this->outputDir . $fileName;
-        $entry = "\n\n--- " . date('Y-m-d H:i:s') . " ---\n" . $message . "\n";
+        $entry = "\n--- " . date('Y-m-d H:i:s') . " ---\n" . $message . "\n\n";
         $existing = file_exists($path) ? file_get_contents($path) : '';
         file_put_contents($path, $entry . $existing);
     }
@@ -163,16 +166,18 @@ class MakeGendex
         // Geboortedatum: BIRT, BAPM, CHR (in volgorde)
         $birthDate = $this->getDateFromFacts(['BIRT', 'BAPM', 'CHR'], $xref, $tree);
     
-        // Geboorteplaats
-        $birthPlace = 
-            trim(strip_tags($this->getPlaceString($individual->getBirthPlace())));
+        // Geboorteplaats - alleen ophalen als nodig
+        $birthPlace = ($this->showPlaces === 1 || $this->showPlaces === 3) 
+            ? trim(strip_tags($this->getPlaceString($individual->getBirthPlace())))
+            : '';
     
         // Overlijdensdatum: DEAT, BURI
         $deathDate = $this->getDateFromFacts(['DEAT', 'BURI'], $xref, $tree);
     
-        // Overlijdensplaats
-        $deathPlace = 
-            trim(strip_tags($this->getPlaceString($individual->getDeathPlace())));
+        // Overlijdensplaats - alleen ophalen als nodig
+        $deathPlace = ($this->showPlaces === 2 || $this->showPlaces === 3)
+            ? trim(strip_tags($this->getPlaceString($individual->getDeathPlace())))
+            : '';
     
         // Build base reference
         $baseReference = $tree->name() . '/individual/' . $xref;
@@ -292,20 +297,27 @@ class MakeGendex
         }
     }
 
-    public function generateGendexFile(array $selectedTrees, bool $addAllNames = false, bool $diacritical = false, $chooseDateFormat = false): void
+    public function generateGendexFile(
+        array $selectedTrees, 
+        bool $addAllNames = false, 
+        bool $diacritical = false, 
+        bool $chooseDateFormat = false,
+        int $showPlaces = 3
+    ): void
     {
         // Stel de opties in als ze zijn doorgegeven
         $this->addAllNames = $addAllNames;
         $this->diacritical = $diacritical;
         $this->chooseDateFormat = $chooseDateFormat;
+        $this->showPlaces = max(0, min(3, $showPlaces));
         
         $tmpPath = $this->outputDir . $this->gendexFilename . $this->tmpSuffix;
         $finalPath = $this->outputDir . $this->gendexFilename;
         $bkPath = $finalPath . $this->bkSuffix;
 
-        $tmpFilteredPath = $this->outputDir . $this->filteredNamesFilename . $this->tmpSuffix;
-        $finalFilteredPath = $this->outputDir . $this->filteredNamesFilename;
-        $bkFilteredPath = $finalFilteredPath . $this->bkSuffix;
+        // $tmpFilteredPath = $this->outputDir . $this->filteredNamesFilename . $this->tmpSuffix;
+        // $finalFilteredPath = $this->outputDir . $this->filteredNamesFilename;
+        // $bkFilteredPath = $finalFilteredPath . $this->bkSuffix;
 
         $handleMain = fopen($tmpPath, 'w');
         if ($handleMain === false) {
@@ -314,15 +326,15 @@ class MakeGendex
         // BOM (Byte Order Mark) toevoegen voor UTF-8
         fwrite($handleMain, "\xEF\xBB\xBF");
         
-        $handleFiltered = fopen($tmpFilteredPath, 'w');
+/*        $handleFiltered = fopen($tmpFilteredPath, 'w');
         if ($handleFiltered === false) {
             fclose($handleMain);
             throw new Exception("Kan tmp filtered bestand niet openen: {$tmpFilteredPath}");
-        }
-        fwrite($handleFiltered, "\xEF\xBB\xBF");
+        }*/
+        /*fwrite($handleFiltered, "\xEF\xBB\xBF");*/
         
         fwrite($handleMain, $this->generateGendexHeader() . PHP_EOL);
-        fwrite($handleFiltered, "tree|n_id|n_givn|n_surname|reason" . PHP_EOL);
+/*        fwrite($handleFiltered, "tree|n_id|n_givn|n_surname|reason" . PHP_EOL);*/
 
         try {
             foreach ($selectedTrees as $treeId) {
@@ -333,7 +345,8 @@ class MakeGendex
                 }
                     
                 // Probeer Individual-object te maken; voorkomt M/N/andere records
-                $this->iterateNames($tree, function($nameRow) use ($tree, $handleMain, $handleFiltered) {
+                //$this->iterateNames($tree, function($nameRow) use ($tree, $handleMain, $handleFiltered) {
+                $this->iterateNames($tree, function($nameRow) use ($tree, $handleMain) {  
                     $nId = (string)$nameRow->n_id;
                     
                     $individual = Registry::individualFactory()->make($nId, $tree);
@@ -342,9 +355,9 @@ class MakeGendex
                             $this->sanitizeFieldForOutput((string)$nameRow->n_givn) : '';
                         $surn = isset($nameRow->n_surname) ? 
                             $this->sanitizeFieldForOutput((string)$nameRow->n_surname) : '';
-                        $reason = 'no_individual';
-                        $filteredLine = implode('|', [$tree->name(), $nId, $givn, $surn, $reason]);
-                        fwrite($handleFiltered, $filteredLine . PHP_EOL);
+                        // $reason = 'no_individual';
+                        // $filteredLine = implode('|', [$tree->name(), $nId, $givn, $surn, $reason]);
+                        // fwrite($handleFiltered, $filteredLine . PHP_EOL);
                         return;
                     }
                 
@@ -353,9 +366,9 @@ class MakeGendex
                             $this->sanitizeFieldForOutput((string)$nameRow->n_givn) : '';
                         $surn = isset($nameRow->n_surname) ? 
                             $this->sanitizeFieldForOutput((string)$nameRow->n_surname) : '';
-                        $reason = 'privacy_filtered';
-                        $filteredLine = implode('|', [$tree->name(), $nId, $givn, $surn, $reason]);
-                        fwrite($handleFiltered, $filteredLine . PHP_EOL);
+                        // $reason = 'privacy_filtered';
+                        // $filteredLine = implode('|', [$tree->name(), $nId, $givn, $surn, $reason]);
+                        // fwrite($handleFiltered, $filteredLine . PHP_EOL);
                         return;
                     }
                 
@@ -368,10 +381,11 @@ class MakeGendex
             }
 
             fflush($handleMain);
-            fflush($handleFiltered);
+            // fflush($handleFiltered);
             fclose($handleMain);
-            fclose($handleFiltered);
-            $handleMain = $handleFiltered = null;
+            // fclose($handleFiltered);
+            // $handleMain = $handleFiltered = null;
+            $handleMain = null;
 
             // Backup & replace main file
             if (file_exists($finalPath)) {
@@ -388,7 +402,7 @@ class MakeGendex
             }
 
             // Backup & replace filtered file
-            if (file_exists($finalFilteredPath)) {
+            /*if (file_exists($finalFilteredPath)) {
                 if (!@rename($finalFilteredPath, $bkFilteredPath)) {
                     if (!@copy($finalFilteredPath, $bkFilteredPath) || !@unlink($finalFilteredPath)) {
                         throw new Exception("Kon backup niet aanmaken van {$finalFilteredPath} naar {$bkFilteredPath}");
@@ -399,23 +413,23 @@ class MakeGendex
                 if (!@copy($tmpFilteredPath, $finalFilteredPath) || !@unlink($tmpFilteredPath)) {
                     throw new Exception("Kon filtered bestand niet verplaatsen naar {$finalFilteredPath}");
                 }
-            }
+            }*/
 
-            $this->log("GENDEX en filtered bestanden succesvol gegenereerd.");
+            $this->log("GENDEX bestand succesvol gegenereerd.");
  
         } catch (Exception $e) {
             if (isset($handleMain) && is_resource($handleMain)) {
                 fclose($handleMain);
             }
-            if (isset($handleFiltered) && is_resource($handleFiltered)) {
+            /*if (isset($handleFiltered) && is_resource($handleFiltered)) {
                 fclose($handleFiltered);
-            }
+            }*/
             if (file_exists($tmpPath)) {
                 @unlink($tmpPath);
             }
-            if (file_exists($tmpFilteredPath)) {
+            /*if (file_exists($tmpFilteredPath)) {
                 @unlink($tmpFilteredPath);
-            }
+            }*/
             $this->log("Fout tijdens generatie: " . $e->getMessage());
             throw $e;
         }
